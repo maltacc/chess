@@ -8,7 +8,7 @@ using namespace std;
 int main() {
     Board b; 
     Player p1, p2; 
-
+    int turn = 0; // tracks the player's turn, 0 or 1
     string cmd; 
     while (cin >> cmd) {
         if (cmd == "game") {
@@ -55,7 +55,7 @@ int main() {
                     char piece; 
                     string pos; 
                     cin >> piece >> pos; 
-                    b.place(piece, pos); 
+                    b.place(piece, pos, turn);
                 }
                 else if (op == '-') {
                     string pos; 

@@ -9,6 +9,8 @@ class Move {
 
     public: 
         Move(Pos start, Pos end); 
+        Pos getStart(); 
+        Pos getEnd(); 
 }; 
 
 #endif 

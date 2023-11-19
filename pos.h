@@ -6,6 +6,7 @@ class Pos {
     int rank, file; 
 
     public: 
+        Pos(); 
         Pos(string p); // takes in position as a string 
         string toString(); 
         int getRank(); 

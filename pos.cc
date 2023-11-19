@@ -1,8 +1,10 @@
 #include "pos.h"
 using namespace std; 
 
+Pos::Pos(): rank{0}, file{0} {} 
+
 Pos::Pos(string p) {
-    rank = p[1] - '0'; // cnovert char to int
+    rank = '8' - p[1]; // convert char to int, account for board indices
     file = p[0] - 'a'; 
 }
 

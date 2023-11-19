@@ -10,11 +10,14 @@ class Square {
     Pos pos; 
 
     public: 
+        Square();
         Square(Pos pos); 
         Square(Piece *p, Pos pos); 
         void move(Square &s); // move piece to s, handles captures too
         void setEmpty(); // remove piece from square
         bool isEmpty(); // square doesn't contain a piece
+        void addPiece(char piece, int turn); // add piece to square
+        char getPiece();
         ~Square(); 
 }; 
 
