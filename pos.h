@@ -8,7 +8,6 @@ class Pos {
     public: 
         Pos(); 
         Pos(string p); // takes in position as a string 
-        string toString(); 
         int getRank(); 
         int getFile();
 }; 
