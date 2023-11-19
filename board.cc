@@ -6,7 +6,7 @@ Board::Board() {}
 void Board::clear() {}
 
 void Board::place(char piece, Pos pos, int turn) {
-    b[7 - pos.getRank()][pos.getFile()].addPiece(piece, turn);
+    b[pos.getRank()][pos.getFile()].addPiece(piece, turn);
     notifyObservers(); 
 } 
 
