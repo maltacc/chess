@@ -2,8 +2,11 @@
 #define __PLAYER_H__
 #include "move.h"
 class Player {
+    Side side;
     public: 
-        Move getMove(); 
+        Player(Side side);
+        virtual Move getMove() = 0;
+        virtual ~Player(); 
 }; 
 
 #endif 

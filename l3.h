@@ -1,10 +1,12 @@
 #ifndef __L3_H__
 #define __L3_H__
-#include "level.h"
+#include "computer.h"
 
-class L3: public Level {
+class L3: public Computer {
     public: 
+        L3(Side side, Board *board);
         Move getMove() override; 
+        ~L3();
 };
 
 #endif

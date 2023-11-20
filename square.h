@@ -6,17 +6,19 @@
 
 class Square {
     Piece *p = nullptr; 
-    vector<int> validMoves; // tracks the valid moves for every square
+    vector<Move> validMoves; // tracks the valid moves for every square
     Pos pos; 
 
     public: 
+        friend class Board;
+
         Square();
         Square(Pos pos); 
         Square(Piece *p, Pos pos); 
         void move(Square &s); // move piece to s, handles captures too
         void setEmpty(); // remove piece from square
         bool isEmpty(); // square doesn't contain a piece
-        void addPiece(char piece, int turn); // add piece to square
+        void addPiece(char piece, Side turn); // add piece to square
         char getPiece();
         ~Square(); 
 }; 

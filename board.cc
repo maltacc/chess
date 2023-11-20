@@ -5,7 +5,7 @@ Board::Board() {}
 
 void Board::clear() {}
 
-void Board::place(char piece, Pos pos, int turn) {
+void Board::place(char piece, Pos pos, Side turn) {
     b[pos.getRank()][pos.getFile()].addPiece(piece, turn);
     notifyObservers(); 
 } 
@@ -17,15 +17,9 @@ void Board::remove(Pos p) {
     }
 }
 
-bool Board::isValidMove(Move m) {
-    
-}
-
-void Board::move(Move m) {
-    if (isValidMove(m)) {
-        b[m.getStart().getRank()][m.getStart().getFile()].move(b[m.getEnd().getRank()][m.getEnd().getFile()]);
-    }
-    // move is invalid
+bool Board::move(Move m) {
+    b[m.getStart().getRank()][m.getStart().getFile()].move(b[m.getEnd().getRank()][m.getEnd().getFile()]);
+    return true;
 }
 
 void Board::attach(Observer* o) { observers.emplace_back(o); }
@@ -35,5 +29,7 @@ void Board::notifyObservers() {
 }
 
 char Board::getPiece(int r, int c) { return b[r][c].getPiece(); }
+
+State Board::getState(){ return state; }
 
 Board::~Board() {}

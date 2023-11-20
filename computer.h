@@ -2,13 +2,14 @@
 #define __COMPUTER_H__
 #include "player.h"
 #include "move.h"
+#include "board.h"
 
 class Computer: public Player {
-    int lvl; // difficulty level
+    Board *board;
 
     public: 
-        Computer(int lvl); 
-        virtual Move getMove(); 
+        Computer(Side side, Board *board); 
+        virtual Move getMove() = 0; 
         virtual ~Computer();
 }; 
 
