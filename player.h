@@ -1,6 +1,7 @@
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
-#include "move.h"
+#include "legalboard.h"
+
 class Player {
     Side side;
     public: 

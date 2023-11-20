@@ -1,7 +1,6 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 #include "square.h"
-#include "pos.h"
 #include "move.h"
 #include "observer.h"
 

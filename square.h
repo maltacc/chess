@@ -1,13 +1,12 @@
 #ifndef __SQUARE_H__
 #define __SQUARE_H__
 #include "piece.h"
-#include "pos.h"
+#include "move.h"
 #include <vector>
 
 class Square {
     Piece *p = nullptr; 
     vector<Move> validMoves; // tracks the valid moves for every square
-    Pos pos; 
 
     public: 
         friend class Board;

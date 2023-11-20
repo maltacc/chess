@@ -1,13 +1,12 @@
 #include <string> 
 #include <iostream> 
-#include "board.h"
+#include "legalboard.h"
 #include "player.h"
-#include "pos.h"
 using namespace std; 
 
 int main() {
-    Board b; 
-    Player p1, p2; 
+    LegalBoard b; 
+    Player *p1, *p2; 
     int turn = 0; // tracks the player's turn, 0 or 1
     string cmd; 
     while (cin >> cmd) {
@@ -38,7 +37,7 @@ int main() {
             // if human, take in start and end moves
             string start, end; 
             cin >> start >> end; 
-            b.move(Pos{start}, Pos{end}); 
+            b.move(Move{Pos{start}, Pos{end}}); 
 
             // if move enables a pawn promotion, take in piece to promote to
             // Q: how can we check the number of parameters in the line?

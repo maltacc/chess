@@ -1,8 +1,6 @@
 #ifndef __COMPUTER_H__
 #define __COMPUTER_H__
 #include "player.h"
-#include "move.h"
-#include "board.h"
 
 class Computer: public Player {
     Board *board;
