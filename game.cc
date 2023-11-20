@@ -7,7 +7,6 @@ using namespace std;
 int main() {
     LegalBoard b; 
     Player *p1, *p2; 
-    int turn = 0; // tracks the player's turn, 0 or 1
     string cmd; 
     while (cin >> cmd) {
         if (cmd == "game") {
@@ -54,7 +53,7 @@ int main() {
                     char piece; 
                     string pos; 
                     cin >> piece >> pos; 
-                    b.place(piece, pos, turn);
+                    b.place(piece, Pos{pos});
                 }
                 else if (op == '-') {
                     string pos; 
@@ -65,6 +64,8 @@ int main() {
                     string side; 
                     cin >> side; 
                     // side's turn next
+                    if (side == 'white') b.setTurn(Side::W); 
+                    else b.setTurn(Side::B); 
                 }
                 else break; // done
             }

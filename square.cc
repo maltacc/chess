@@ -3,9 +3,7 @@ using namespace std;
 
 Square::Square() {} 
 
-Square::Square(Pos pos): p{nullptr}, pos{pos} {}
-
-Square::Square(Piece *p, Pos pos): p{p}, pos{pos} {}
+Square::Square(Piece *p): p{p} {}
 
 void Square::move(Square &s) {
     std::swap(p, s.p); 
@@ -22,11 +20,10 @@ void Square::setEmpty() {
     }
 }
 
-void Square::addPiece(char piece, Side turn) {
+void Square::addPiece(char piece) {
     if (p) delete p; 
-    p = new Piece{piece, Side(turn)}; // ** check side conversion is right
+    if (piece >= 'a' && piece <= 'z') p = new Piece{piece, Side::B};
+    else p = new Piece{piece, Side::W}; 
 }
-
-char Square::getPiece() { return p ? p->getType() : '_'; }
 
 Square::~Square() { delete p; }

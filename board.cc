@@ -1,12 +1,12 @@
 #include "board.h"
 using namespace std; 
 
-Board::Board() {}
+Board::Board(): state{State::None}, turn{Side::W} {}
 
 void Board::clear() {}
 
-void Board::place(char piece, Pos pos, Side turn) {
-    b[pos.getRank()][pos.getFile()].addPiece(piece, turn);
+void Board::place(char piece, Pos pos) {
+    b[pos.getRank()][pos.getFile()].addPiece(piece);
     notifyObservers(); 
 } 
 
@@ -28,8 +28,10 @@ void Board::notifyObservers() {
     for (auto o: observers) o->notify(*this); 
 }
 
-char Board::getPiece(int r, int c) { return b[r][c].getPiece(); }
-
 State Board::getState(){ return state; }
+
+Side Board::getTurn() { return turn; }
+
+void Board::setTurn(Side s) { turn = s; }
 
 Board::~Board() {}

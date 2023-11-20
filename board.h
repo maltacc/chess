@@ -10,19 +10,20 @@ class Board {
     protected:
         Square b[8][8];
         vector<Observer*> observers;
-        State state = State::None;
+        State state;
+        Side turn; 
 
     public: 
-        friend class Player;
         Board(); 
         void clear(); // clears board for new game
-        void place(char piece, Pos pos, Side turn); 
+        void place(char piece, Pos pos); 
         void remove(Pos p); 
         State getState();
+        Side getTurn(); 
+        void setTurn(Side s);
         virtual bool move(Move m);
         void attach(Observer* o); // observer pattern
         void notifyObservers(); 
-        char getPiece(int r, int c);
         ~Board(); 
 }; 
 
