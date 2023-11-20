@@ -1,3 +1,3 @@
 #include "computer.h"
 
-Computer::Computer(Side side, Board *board): side{side}, board{board} {};
+Computer::Computer(Side side, Board *board): Player{side}, board{board} {};

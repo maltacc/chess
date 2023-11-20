@@ -9,7 +9,10 @@ void LegalBoard::updateBishop(Pos p) {}
 void LegalBoard::updateKnight(Pos p) {}
 void LegalBoard::updatePawn(Pos p) {}
 bool LegalBoard::insufficientMaterial() {
-    
+    int knightCount = 0;
+    int bishopCount = 0;
+    bool majorPieceOrPawn = false;
 }
 void LegalBoard::updateState() {}
 auto LegalBoard::begin(){ return legalMoves.begin(); }
+auto LegalBoard::end(){ return legalMoves.end(); }
