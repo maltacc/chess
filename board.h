@@ -5,7 +5,7 @@
 #include "move.h"
 #include "observer.h"
 
-enum class State{Checkmate, Stalemate, Draw, Active, None};
+enum class State{Checkmate, Stalemate, Draw, InPlay, None};
 
 class Board {
     protected:

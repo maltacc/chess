@@ -28,16 +28,17 @@ class LegalBoard: public Board {
     void updatePawn(Pos p); 
     bool insufficientMaterial();
     void updateState();
-public:
-    Side getTurn();
-    bool move(Move m) override;
-    void promote(char piece); // Does nothing if there is no pawn to promote
+    
+    public:
+        Side getTurn();
+        bool move(Move m) override;
+        void promote(char piece); // Does nothing if there is no pawn to promote
 
-    auto begin(); 
-    auto end(); 
-    /*
-        Add an iterator for the computer to traverse through legal moves
-    */
+        auto begin(); 
+        auto end(); 
+        /*
+            Add an iterator for the computer to traverse through legal moves
+        */
 
 };
 

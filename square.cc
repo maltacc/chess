@@ -22,7 +22,7 @@ void Square::setEmpty() {
     }
 }
 
-void Square::addPiece(char piece, int turn) {
+void Square::addPiece(char piece, Side turn) {
     if (p) delete p; 
     p = new Piece{piece, Side(turn)}; // ** check side conversion is right
 }
