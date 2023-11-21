@@ -1,7 +1,6 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 #include "square.h"
-#include "move.h"
 #include "observer.h"
 
 enum class State{Checkmate, Stalemate, Draw, Resign, InPlay, None};
