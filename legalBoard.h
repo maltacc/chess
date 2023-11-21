@@ -5,7 +5,7 @@
 using namespace std;
 
 class LegalBoard: public Board {
-    struct Castle { // struct to keep track of castling rights
+    struct canCastle { // struct to keep track of castling rights
         bool blackKing = true; // Black king-side castle
         bool blackQueen = true; // Black queen-side castle
         bool whiteKing = true; // White king-side castle
@@ -15,7 +15,7 @@ class LegalBoard: public Board {
     Side turn;
     bool whiteCheck, blackCheck;
     vector<Move> legalMoves;
-    Castle castle{};
+    canCastle castle{};
 
     // Updates the legal moves for pieces matching Side turn.
     // Uses the following 6 fns to update the legal moves for all the pieces.
@@ -30,11 +30,14 @@ class LegalBoard: public Board {
     void updateKnight(Pos p);
     void updatePawn(Pos p);
 
+    // Checks if a square is under attack.
+    bool underCheck(Pos p, Side s);
+
     // Calculates if there is a draw by insufficient material.
     bool insufficientMaterial();
 
     // Calculates if there have been three moves in a row made by the same player. 
-    // bool threefoldRepetition();
+    bool threefoldRepetition();
 
     // Updates if the game is in checkmate, stalemate, draw, still active, or none.
     void updateState();
