@@ -5,7 +5,6 @@
 
 class Move {
     Pos start, end; 
-    // Piece* captured = nullptr; // piece captured
 
     public: 
         Move(Pos start, Pos end); 

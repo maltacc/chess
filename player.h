@@ -3,9 +3,10 @@
 #include "legalboard.h"
 
 class Player {
-    Side side;
+    LegalBoard *b; 
+
     public: 
-        Player(Side side);
+        Player();
         virtual Move getMove() = 0;
         virtual ~Player(); 
 }; 

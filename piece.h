@@ -6,7 +6,6 @@ enum class Side{W, B, N}; // white, black, no colour
 class Piece {
     char type; 
     Side side; 
-    int value; // value of piece
 
     public: 
         Piece(char t, Side s = Side::N); 

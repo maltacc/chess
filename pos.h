@@ -8,6 +8,7 @@ class Pos {
     public: 
         Pos(); 
         Pos(string p); // takes in position as a string 
+        Pos(int x, int y); // overloaded constructor with param coordinates 0-7
         int getRank(); 
         int getFile();
 }; 

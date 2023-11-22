@@ -1,74 +1,76 @@
-#include <string> 
-#include <iostream> 
-#include "legalboard.h"
-#include "player.h"
+#include "game.h"
 using namespace std; 
 
-int main() {
-    LegalBoard b; 
-    Player *p1, *p2; 
-    string cmd; 
-    while (cin >> cmd) {
-        if (cmd == "game") {
-            string w, b; 
-            cin >> w >> b; 
-            if (w == "human") continue; 
-            else {
-                char lvl = w.back(); 
-                if (lvl == '1') {
+void Game::setPlayer(string player, Player *p, Side s) {
+    if (player == "human") p = new Human; 
+    else {
+        int lvl = player.back(); 
+        if (lvl == 1) p = new L1{s, &b};
+        else if (lvl == 2) p = new L2{s, &b}; 
+        else if (lvl == 3) p = new L3{s, &b}; 
+        else p = new L4{s, &b}; 
+    }
+}
 
-                }
-                else if (lvl == '2') {
+Game::Game(): p1{nullptr}, p2{nullptr}, whiteScore{0}, blackScore{0} {}
 
-                }
-                else if (lvl == '3') {
-
-                }
-                else {}
-            }
+void Game::setupCustom(istream &in) {
+    string cmd; // string instead of char so we can check for keyword "done"
+    while (in >> cmd && cmd != "done") { // while in setup mode
+        if (cmd == "+") {
+            char piece; 
+            string pos; 
+            in >> piece >> pos; 
+            b.place(piece, Pos{pos});
         }
-        else if (cmd == "resign") {
-
+        else if (cmd == "-") {
+            string pos; 
+            cin >> pos; 
+            b.remove(Pos{pos}); // remove piece from pos
         }
-        else if (cmd == "move") {
-            // if computer, automatically move 
-            
-            // if human, take in start and end moves
-            string start, end; 
-            cin >> start >> end; 
-            b.move(Move{Pos{start}, Pos{end}}); 
-
-            // if move enables a pawn promotion, take in piece to promote to
-            // Q: how can we check the number of parameters in the line?
-            string promoteTo; 
-            cin >> promoteTo;
-            b.move(start, end, promoteTo); 
-        }
-        else if (cmd == "setup") {
-            // check game is not currently running 
-
-            char op; 
-            while (cin >> op) {
-                if (op == '+') {
-                    char piece; 
-                    string pos; 
-                    cin >> piece >> pos; 
-                    b.place(piece, Pos{pos});
-                }
-                else if (op == '-') {
-                    string pos; 
-                    cin >> pos; 
-                    b.remove(Pos{pos}) // remove piece from pos
-                }
-                else if (op == '=') {
-                    string side; 
-                    cin >> side; 
-                    // side's turn next
-                    if (side == 'white') b.setTurn(Side::W); 
-                    else b.setTurn(Side::B); 
-                }
-                else break; // done
-            }
+        else if (cmd == "=") {
+            string side; 
+            in >> side; 
+            if (side == "white") b.setTurn(Side::W); 
+            else b.setTurn(Side::B); 
         }
     }
+}
+
+void Game::setupDefault() {
+    b.place('K', Pos{"e1"});// set up Kings 
+    b.place('k', Pos{"e8"}); 
+
+    b.place('Q', Pos{"d1"}); // set up Queens
+    b.place('q', Pos{"d8"}); 
+
+    b.place('B', Pos{"f1"}); // set up Bishops
+    b.place('B', Pos{"c1"});
+    b.place('b', Pos{"f8"}); 
+    b.place('b', Pos{"c8"});
+
+    b.place('R', Pos{"a1"}); // set up Rooks
+    b.place('R', Pos{"h1"}); 
+    b.place('r', Pos{"a8"}); 
+    b.place('r', Pos{"h8"}); 
+
+    b.place('N', Pos{"b1"}); // set up Knights
+    b.place('N', Pos{"g1"});
+    b.place('n', Pos{"b8"});
+    b.place('n', Pos{"g8"});
+
+    for (int i = 0; i < 7; i++) {
+        b.place('P', Pos{6, i}); // place white pawns
+        b.place('p', Pos{1, i}); // place black pawns
+    }
+}
+
+int Game::run(string player1, string player2) {
+    setPlayer(player1, p1, Side::W); 
+    setPlayer(player2, p2, Side::B);
+}
+
+Game::~Game() {
+    delete p1; 
+    delete p2; 
 }

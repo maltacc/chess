@@ -8,6 +8,8 @@ Pos::Pos(string p) {
     file = p[0] - 'a'; 
 }
 
+Pos::Pos(int x, int y): rank{x}, file{y} {}
+
 int Pos::getRank() { return rank; }
 
 int Pos::getFile() { return file; }

@@ -3,8 +3,10 @@
 #include "player.h"
 
 class Human: public Player {
-public:
-    
+    public:
+        Human(); 
+        Move getMove();     
+        ~Human(); 
 }; 
 
 #endif 
