@@ -28,6 +28,10 @@ void Board::notifyObservers() {
     for (auto o: observers) o->notify(*this); 
 }
 
+char Board::getPiece(int i, int j) {
+    return b[i][j].p->getType(); 
+}
+
 State Board::getState(){ return state; }
 
 Side Board::getTurn() { return turn; }

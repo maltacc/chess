@@ -7,6 +7,7 @@ class Square {
     Piece *p = nullptr; 
 
     public: 
+        friend class Board; 
         Square();
         Square(Piece *p); 
         void move(Square &s); // move piece to s, handles captures too
