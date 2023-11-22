@@ -3,7 +3,8 @@
 #include "legalboard.h"
 
 class Player {
-    LegalBoard *b; 
+    protected: 
+        LegalBoard *b; 
 
     public: 
         Player();
