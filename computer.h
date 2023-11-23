@@ -6,8 +6,7 @@ class Computer: public Player {
     Board *board;
 
     public: 
-        Computer(Side side, Board *board); 
-        virtual Move getMove() = 0; 
+        Computer(Board *board);
         virtual ~Computer();
 }; 
 

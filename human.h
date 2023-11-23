@@ -5,7 +5,7 @@
 class Human: public Player {
     public:
         Human(); 
-        Move getMove();     
+        PMove getMove();     
         ~Human(); 
 }; 
 

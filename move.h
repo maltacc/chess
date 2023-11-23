@@ -4,7 +4,8 @@
 #include "piece.h"
 
 class Move {
-    Pos start, end; 
+    protected:
+        Pos start, end; 
 
     public: 
         Move(Pos start, Pos end); 
