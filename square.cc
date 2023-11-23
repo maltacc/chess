@@ -26,4 +26,8 @@ void Square::addPiece(char piece) {
     else p = new Piece{piece, Side::W}; 
 }
 
+void Square::setAttacked(bool val) { attacked = 0; }
+
+Piece& Square::operator*() const { return *p; }
+
 Square::~Square() { delete p; }

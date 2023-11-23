@@ -14,7 +14,7 @@ class LegalBoard: public Board {
 
     Side turn;
     bool whiteCheck, blackCheck;
-    vector<Move> legalMoves;
+    vector<Move> legalMoves; // stores legal moves for 1 turn at a time
     canCastle castle{};
 
     // Updates the legal moves for pieces matching Side turn.
@@ -23,12 +23,16 @@ class LegalBoard: public Board {
 
     // Calculates legal moves for specific piece types at specific positions.
     // Adds legal moves to legalMoves as well as to squares at Pos p.
-    void updateKing(Pos p);
-    void updateQueen(Pos p);
-    void updateRook(Pos p);
-    void updateBishop(Pos p);
-    void updateKnight(Pos p);
-    void updatePawn(Pos p);
+    void updateKingMoves(Pos p);
+    void updateQueenMoves(Pos p);
+    void updateRookMoves(Pos p);
+    void updateBishopMoves(Pos p);
+    void updateKnightMoves(Pos p);
+    void updatePawnMoves(Pos p);
+
+    bool inBounds(int x, int y); 
+
+    void generateAttackMap(); 
 
     // Checks if a square is under attack.
     bool underCheck(Pos p, Side s);
