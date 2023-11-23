@@ -13,3 +13,9 @@ Pos::Pos(int x, int y): rank{x}, file{y} {}
 int Pos::getRank() { return rank; }
 
 int Pos::getFile() { return file; }
+
+bool Pos::operator!=(const Pos &other) {
+    return !(*this <=> other); 
+}
+
+Pos::~Pos() {}

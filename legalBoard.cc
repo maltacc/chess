@@ -3,6 +3,11 @@ using namespace std;
 
 void LegalBoard::updateLegalMoves() {
     legalMoves.clear(); 
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            
+        }
+    }
 }
 
 void LegalBoard::updateKingMoves(Pos p) {
@@ -62,7 +67,6 @@ void LegalBoard::updateKingMoves(Pos p) {
                 if (inBounds(i-1, j-1)) b[i-1][j-1].setAttacked(1); 
             }
 
-            // square contains a bishop, rook, or queen 
             // Diagonal Moves (Bishop or Queen):
             if (p == 'b' || p == 'B' || p == 'q' || p == 'Q') {
                 for (int r = i - 1, c = j + 1; r >= 0 && c <= 7; r--, c++) {
@@ -146,7 +150,9 @@ void LegalBoard::updateQueenMoves(Pos p) {
         }
 }
 
-void LegalBoard::updateRookMoves(Pos p) {}
+void LegalBoard::updateRookMoves(Pos p) {
+
+}
 void LegalBoard::updateBishopMoves(Pos p) {}
 void LegalBoard::updateKnightMoves(Pos p) {}
 void LegalBoard::updatePawnMoves(Pos p) {}
@@ -156,5 +162,33 @@ bool LegalBoard::insufficientMaterial() {
     bool majorPieceOrPawn = false;
 }
 void LegalBoard::updateState() {}
+Side LegalBoard::getTurn() {}
+
+bool LegalBoard::move(Move m) {
+    bool proceed = 0; 
+    for (auto move: legalMoves) {
+        if (!(move.getStart() != m.getStart()) && !(move.getEnd() != m.getEnd())) proceed = 1;
+    }
+    if (!proceed) return 0; // move is not in list of legal moves
+
+    int xi = m.getStart().getRank(), yi = m.getStart().getFile(), 
+        xf = m.getEnd().getRank(), yf = m.getEnd().getFile(); 
+
+    b[xi][yi].move(b[xf][yf]); 
+    notifyObservers(); 
+    return 1; // move was successful
+}
+
+void LegalBoard::promote(char piece) {
+    if (piece >= 'a' & piece <= 'z') { // black piece
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (getPiece(i, j) == 'p' || getPiece(i, j) == 'P') {
+                    b[i][j].addPiece(piece); 
+                }
+            }
+        }
+    }
+}
 auto LegalBoard::begin(){ return legalMoves.begin(); }
 auto LegalBoard::end(){ return legalMoves.end(); }

@@ -19,6 +19,7 @@ void Board::remove(Pos p) {
 
 bool Board::move(Move m) {
     b[m.getStart().getRank()][m.getStart().getFile()].move(b[m.getEnd().getRank()][m.getEnd().getFile()]);
+    notifyObservers(); 
     return true;
 }
 
