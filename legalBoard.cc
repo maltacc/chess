@@ -105,7 +105,7 @@ void LegalBoard::generateAttackMap() {
 }
 
 void LegalBoard::updateKingMoves(Pos p) {
-    for (int i = p.getFile)
+
 }
 
 void LegalBoard::updateQueenMoves(Pos p) {

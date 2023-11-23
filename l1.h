@@ -5,7 +5,7 @@
 class L1: public Computer {
     public: 
         L1(Board *board);
-        Move getMove() override; 
+        PMove getMove() override; 
         ~L1();
 };
 

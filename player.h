@@ -1,6 +1,7 @@
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
 #include "legalboard.h"
+#include "PMove.h"
 
 class Player {
     protected: 
@@ -8,7 +9,7 @@ class Player {
 
     public: 
         Player();
-        virtual Move getMove() = 0;
+        virtual PMove getMove() = 0;
         virtual ~Player(); 
 }; 
 

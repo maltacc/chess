@@ -3,6 +3,6 @@ using namespace std;
 
 Human::Human() {}
 
-Move Human::getMove() { }
+PMove Human::getMove() { }
 
 Human::~Human() {}

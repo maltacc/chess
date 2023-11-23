@@ -2,5 +2,5 @@
 using namespace std; 
 
 L1::L1(Board *board): Computer{board} {}
-Move L1::getMove() {}
+PMove L1::getMove() {}
 L1::~L1() {}
