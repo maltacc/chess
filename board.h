@@ -2,6 +2,7 @@
 #define __BOARD_H__
 #include "square.h"
 #include "observer.h"
+using namespace std;
 
 enum class State{Checkmate, Stalemate, Draw, Resign, InPlay, None};
 

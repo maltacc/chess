@@ -21,6 +21,10 @@ class LegalBoard: public Board {
     // Uses the following 6 fns to update the legal moves for all the pieces.
     void updateLegalMoves();
 
+    // Generates the attack map of the current opponent's pieces for the purposes
+    // of generating legal King moves.
+    void generateAttackMap();
+
     // Calculates legal moves for specific piece types at specific positions.
     // Adds legal moves to legalMoves as well as to squares at Pos p.
     void updateKingMoves(Pos p);

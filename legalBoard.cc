@@ -10,13 +10,7 @@ void LegalBoard::updateLegalMoves() {
     }
 }
 
-void LegalBoard::updateKingMoves(Pos p) {
-    int r = p.getRank(), c = p.getFile(); 
-
-    // check 9 squares surrounding the king for: 
-    // 1) same side piece blocking path 
-    // 2) moving places king under check
-
+void LegalBoard::generateAttackMap() {
     Side attackingSide = turn == Side::W ? Side::B : Side::W; 
 
     // reset attack map
@@ -27,7 +21,7 @@ void LegalBoard::updateKingMoves(Pos p) {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
 
-            if (b[i][j].isEmpty() || (*b[r-1][c]).getSide() == turn) continue;
+            if (b[i][j].isEmpty()) continue;
 
             char p = getPiece(i, j);  
             // square contains a knight, pawn, or king (leaping pieces) 
@@ -70,46 +64,47 @@ void LegalBoard::updateKingMoves(Pos p) {
             // Diagonal Moves (Bishop or Queen):
             if (p == 'b' || p == 'B' || p == 'q' || p == 'Q') {
                 for (int r = i - 1, c = j + 1; r >= 0 && c <= 7; r--, c++) {
-                    if (!b[r][c].isEmpty() && getPiece(r, c) == (turn == Side::W ? 'K' : 'k')) break; // don't mark rest of moves as attacks
                     b[r][c].setAttacked(1); 
+                    if (!b[r][c].isEmpty() && !getPiece(r, c) == (turn == Side::W ? 'K' : 'k')) break;
                 }
                 for (int r = i + 1, c = j + 1; r <= 7 && c <= 7; r++, c++) {
-                    if (!b[r][c].isEmpty() && getPiece(r, c) == (turn == Side::W ? 'K' : 'k')) break; // don't mark rest of moves as attacks
                     b[r][c].setAttacked(1); 
+                    if (!b[r][c].isEmpty() && !getPiece(r, c) == (turn == Side::W ? 'K' : 'k')) break;
                 }
                 for (int r = i - 1, c = j - 1; r >= 0 && c >= 0; r--, c--) {
-                    if (!b[r][c].isEmpty() && getPiece(r, c) == (turn == Side::W ? 'K' : 'k')) break; // don't mark rest of moves as attacks
                     b[r][c].setAttacked(1); 
+                    if (!b[r][c].isEmpty() && !getPiece(r, c) == (turn == Side::W ? 'K' : 'k')) break;
                 }
                 for (int r = i + 1, c = j - 1; r <= 7 && c >= 0; r++, c--) {
-                    if (!b[r][c].isEmpty() && getPiece(r, c) == (turn == Side::W ? 'K' : 'k')) break; // don't mark rest of moves as attacks
                     b[r][c].setAttacked(1); 
+                    if (!b[r][c].isEmpty() && !getPiece(r, c) == (turn == Side::W ? 'K' : 'k')) break;
                 }
             }
 
             // Perpendicular Moves (Rook or Queen):
             if (p == 'r' || p == 'R' || p == 'q' || p == 'Q') {
                 for (int r = i + 1; r < 8; r++){
-                    if (!b[r][j].isEmpty() && getPiece(r, j) == (turn == Side::W ? 'K' : 'k')) break; // don't mark rest of moves as attacks
-                    b[r][j].setAttacked(1);
+                    b[r][j].setAttacked(1); 
+                    if (!b[r][j].isEmpty() && !getPiece(r, j) == (turn == Side::W ? 'K' : 'k')) break;
                 }
                 for (int r = i - 1; r >= 0; r--){
-                    if (!b[r][j].isEmpty() && getPiece(r, j) == (turn == Side::W ? 'K' : 'k')) break; // don't mark rest of moves as attacks
-                    b[r][j].setAttacked(1);
+                    b[r][j].setAttacked(1); 
+                    if (!b[r][j].isEmpty() && !getPiece(r, j) == (turn == Side::W ? 'K' : 'k')) break;
                 }
                 for (int c = j + 1; c < 8; c++){
-                    if (!b[r][j].isEmpty() && getPiece(r, j) == (turn == Side::W ? 'K' : 'k')) break; // don't mark rest of moves as attacks
-                    b[r][j].setAttacked(1);
+                    b[i][c].setAttacked(1); 
+                    if (!b[i][c].isEmpty() && !getPiece(i, c) == (turn == Side::W ? 'K' : 'k')) break;
                 }
                 for (int c = j - 1; c >= 0; c--){
-                    if (!b[i][c].isEmpty() && getPiece(i, c) == (turn == Side::W ? 'K' : 'k')) break; // don't mark rest of moves as attacks
-                    b[i][c].setAttacked(1);
+                    b[i][c].setAttacked(1); 
+                    if (!b[i][c].isEmpty() && !getPiece(i, c) == (turn == Side::W ? 'K' : 'k')) break;
                 }
             }
         }
     }
+}
 
-    
+void LegalBoard::updateKingMoves(Pos p) {
     if (r - 1 >= 0 && ((*b[r-1][c]).getSide() != turn)) legalMoves.push_back(Move{p, Pos{r-1, c}}); // move 1 square above
     if (r + 1 <= 7 && ((*b[r+1][c]).getSide() != turn)) legalMoves.push_back(Move{p, Pos{r+1, c}}); // move 1 square below
     if (c - 1 >= 0 && ((*b[r][c-1]).getSide() != turn)) legalMoves.push_back(Move{p, Pos{r, c-1}}); // move 1 square to the left
