@@ -30,7 +30,8 @@ void Board::notifyObservers() {
 }
 
 char Board::getPiece(int i, int j) {
-    return b[i][j].p->getType(); 
+    if (b[i][j].isEmpty()) return '_'; // in case we call an unoccupied square
+    return (*b[i][j]).getType(); 
 }
 
 State Board::getState(){ return state; }

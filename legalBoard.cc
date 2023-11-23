@@ -18,6 +18,8 @@ void LegalBoard::addDiagonals(int r, int c) {
         // move towards upper right corner of board
         for (int i = r, j = c; i >= 0 && j <= 7; i--, j++) { 
             // if the path is blocked by a king, the path is illegal
+
+            // *** TO-DO: if square is empty, getPiece has an error. check if empty. current soln is in getPiece
             if (getPiece(i, j) == 'K' || getPiece(i, j) == 'k') continue; // ignore the king
             if ((*b[i][j]).getSide() != turn) legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}});  // enemy piece, can capture
             if (!b[i][j].isEmpty()) break; // queen can only capture or move until the first piece it encounters
@@ -233,18 +235,39 @@ void LegalBoard::updateKnightMoves(Pos p) {
 void LegalBoard::updatePawnMoves(Pos p) {
     int r = p.getFile(), c = p.getFile();
     if ((*b[r][c]).getSide() == Side::W) {
-        if (!b[r - 1][c].isEmpty() && ((*b[r - 1][c]).getSide() != turn)) {
-            
-        }
-        if (r == 6) legalMoves.push_back()
+        if (inBounds(r - 1, c) && b[r - 1][c].isEmpty()) legalMoves.push_back(Move{p, Pos{r - 1, c}}); 
+        if (inBounds(r - 2, c) && b[r - 2][c].isEmpty() && (r == 6)) legalMoves.push_back(Move{p, Pos{r - 2, c}}); 
     }
+    if ((*b[r][c]).getSide() == Side::B) {
+        if (inBounds(r + 1, c) && b[r + 1][c].isEmpty()) legalMoves.push_back(Move{p, Pos{r - 1, c}}); 
+        if (inBounds(r + 2, c) && b[r + 2][c].isEmpty() && (r == 1)) legalMoves.push_back(Move{p, Pos{r - 2, c}}); 
+    }
+    // Q: do we consider en passant here? 
 }
 
 bool LegalBoard::insufficientMaterial() {
-    int knightCount = 0;
-    int bishopCount = 0;
-    bool majorPieceOrPawn = false;
+    int knightCount = 0; // need 2 knights 
+    bool whiteSquareBishopCount = 0;
+    bool blackSquareBishopCount = 0;
+    bool majorPieceOrPawn = false; // if you find a rook or queen or pawn, the game can be won
+    for (int r = 0; r < 8; r++) {
+        for (int c = 0; c < 8; c++) {
+            char p = toupper(getPiece(r, c));
+            if (p == 'R' || p == 'Q' || p == 'P') return 0; 
+            else if (p == 'N') {
+                knightCount++; 
+                if (knightCount == 2) return 1; 
+            }
+            else if (p == 'B') {
+                if ((r + c) % 2 == 0) whiteSquareBishopCount = 1; 
+                else blackSquareBishopCount = 1; 
+                if (whiteSquareBishopCount && blackSquareBishopCount) return 1; 
+            }
+        }
+    }
+    return 0; 
 }
+
 void LegalBoard::updateState() {}
 Side LegalBoard::getTurn() { return turn; }
 
