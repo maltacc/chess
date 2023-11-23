@@ -49,6 +49,13 @@ class LegalBoard: public Board {
 
     // Updates if the game is in checkmate, stalemate, draw, still active, or none.
     void updateState();
+
+    // Helper methods: 
+    void addDiagonals(int r, int c); 
+
+    void addPerpendiculars(int r, int c); 
+
+    void addKnightLeaps(int ri, int ci, int rf, int cf); 
     
     public:
         Side getTurn();

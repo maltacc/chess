@@ -14,6 +14,69 @@ bool LegalBoard::inBounds(int x, int y) {
     return (x >= 0) && (x < 8) && (y >= 0) && (y < 8); 
 }
 
+void LegalBoard::addDiagonals(int r, int c) {
+        // move towards upper right corner of board
+        for (int i = r, j = c; i >= 0 && j <= 7; i--, j++) { 
+            // if the path is blocked by a king, the path is illegal
+            if (getPiece(i, j) == 'K' || getPiece(i, j) == 'k') continue; // ignore the king
+            if ((*b[i][j]).getSide() != turn) legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}});  // enemy piece, can capture
+            if (!b[i][j].isEmpty()) break; // queen can only capture or move until the first piece it encounters
+        }
+
+        // move towards upper left corner of board
+        for (int i = r, j = c; i >= 0 && j >= 0; i--, j--) { 
+            // if the path is blocked by a king, the path is illegal
+            if (getPiece(i, j) == 'K' || getPiece(i, j) == 'k') continue; 
+            if ((*b[i][j]).getSide() != turn) legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}}); 
+            if (!b[i][j].isEmpty()) break; // queen can only capture or move until the first piece it encounters
+        }
+
+        // move towards lower right corner of board
+        for (int i = r, j = c; i <= 7 && j <= 7; i++, j++) { 
+            // if the path is blocked by a king, the path is illegal
+            if (getPiece(i, j) == 'K' || getPiece(i, j) == 'k') continue; 
+            if ((*b[i][j]).getSide() != turn) legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}});  
+            if (!b[i][j].isEmpty()) break; // queen can only capture or move until the first piece it encounters
+        }
+
+        // move towards lower left corner of board
+        for (int i = r, j = c; i <= 7 && j >= 0; i++, j--) { 
+            // if the path is blocked by a king, the path is illegal
+            if (getPiece(i, j) == 'K' || getPiece(i, j) == 'k') continue; 
+            if ((*b[i][j]).getSide() != turn) legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}});  
+            if (!b[i][j].isEmpty()) break; // queen can only capture or move until the first piece it encounters
+        }
+}
+
+void LegalBoard::addPerpendiculars(int r, int c) {
+    // check vertical path above piece
+    for (int i = r - 1; i >= 0; i--) {
+        if (getPiece(i, c) == 'K' || getPiece(i, c) == 'k') continue; 
+        if ((*b[i][c]).getSide() != turn) legalMoves.push_back(Move{Pos{r, c}, Pos{i, c}}); // if enemy piece, we can move
+        if (!b[i][c].isEmpty()) break; // we can only move up to that occupied piece
+    }
+
+    // check vertical path below piece 
+    for (int i = r + 1; i < 8; i++) {
+        if (getPiece(i, c) == 'K' || getPiece(i, c) == 'k') continue; 
+        if ((*b[i][c]).getSide() != turn) legalMoves.push_back(Move{Pos{r, c}, Pos{i, c}}); // if enemy piece, we can move
+        if (!b[i][c].isEmpty()) break; // we can only move up to that occupied piece
+    }
+
+    // check horizontal path to the left of piece
+    for (int i = c; i >= 0; i--) {
+        if (getPiece(i, c) == 'K' || getPiece(i, c) == 'k') continue; 
+        if ((*b[i][c]).getSide() != turn) legalMoves.push_back(Move{Pos{r, c}, Pos{i, c}}); // if enemy piece, we can move
+        if (!b[i][c].isEmpty()) break; // we can only move up to that occupied piece
+    }
+
+    // check horizontal path to the right of piece
+    for (int i = c; i < 8; i++) {
+        if (getPiece(i, c) == 'K' || getPiece(i, c) == 'k') continue; 
+        if ((*b[i][c]).getSide() != turn) legalMoves.push_back(Move{Pos{r, c}, Pos{i, c}}); // if enemy piece, we can move
+        if (!b[i][c].isEmpty()) break; // we can only move up to that occupied piece
+    }
+}
 void LegalBoard::generateAttackMap() {
     Side attackingSide = turn == Side::W ? Side::B : Side::W; 
 
@@ -134,44 +197,49 @@ void LegalBoard::updateKingMoves(Pos p) {
 
 void LegalBoard::updateQueenMoves(Pos p) {
     int r = p.getRank(), c = p.getFile(); 
-
-        // loop through diagonals and add to legalMoves
-
-        // move towards upper right corner of board
-        for (int i = r, j = c; i >= 0 && j <= 7; i--, j++) { 
-            // if the path is blocked by a king, the path is illegal
-            if (getPiece(i, j) == 'K' || getPiece(i, j) == 'k') continue; 
-            if ((*b[i][j]).getSide() != turn) legalMoves.push_back(Move{p, Pos{i, j}});  
-        }
-
-        // move towards upper left corner of board
-        for (int i = r, j = c; i >= 0 && j >= 0; i--, j--) { 
-            // if the path is blocked by a king, the path is illegal
-            if (getPiece(i, j) == 'K' || getPiece(i, j) == 'k') continue; 
-            if ((*b[i][j]).getSide() != turn) legalMoves.push_back(Move{p, Pos{i, j}});  
-        }
-
-        // move towards lower right corner of board
-        for (int i = r, j = c; i <= 7 && j <= 7; i++, j++) { 
-            // if the path is blocked by a king, the path is illegal
-            if (getPiece(i, j) == 'K' || getPiece(i, j) == 'k') continue; 
-            if ((*b[i][j]).getSide() != turn) legalMoves.push_back(Move{p, Pos{i, j}});  
-        }
-
-        // move towards lower left corner of board
-        for (int i = r, j = c; i <= 7 && j >= 0; i++, j--) { 
-            // if the path is blocked by a king, the path is illegal
-            if (getPiece(i, j) == 'K' || getPiece(i, j) == 'k') continue; 
-            if ((*b[i][j]).getSide() != turn) legalMoves.push_back(Move{p, Pos{i, j}});  
-        }
+    addDiagonals(r, c); 
+    addPerpendiculars(r, c); 
 }
 
 void LegalBoard::updateRookMoves(Pos p) {
-
+    int r = p.getRank(), c = p.getFile(); 
+    addPerpendiculars(r, c); 
 }
-void LegalBoard::updateBishopMoves(Pos p) {}
-void LegalBoard::updateKnightMoves(Pos p) {}
-void LegalBoard::updatePawnMoves(Pos p) {}
+
+void LegalBoard::updateBishopMoves(Pos p) {
+    int r = p.getRank(), c = p.getFile(); 
+    addDiagonals(r, c); 
+}
+
+void LegalBoard::addKnightLeaps(int ri, int ci, int rf, int cf) {
+    if (inBounds(rf, cf)) {
+        if (b[rf][cf].isEmpty() || (*b[rf][cf]).getSide() != turn) 
+            legalMoves.push_back(Move{Pos{ri, ci}, Pos{rf, cf}});   
+    }
+}
+
+void LegalBoard::updateKnightMoves(Pos p) {
+    int r = p.getRank(), c = p.getFile();
+    addKnightLeaps(r, c, r - 1, c + 2); 
+    addKnightLeaps(r, c, r + 1, c + 2); 
+    addKnightLeaps(r, c, r - 1, c - 2); 
+    addKnightLeaps(r, c, r + 1, c - 2); 
+    addKnightLeaps(r, c, r + 2, c + 1); 
+    addKnightLeaps(r, c, r + 2, c - 1); 
+    addKnightLeaps(r, c, r - 2, c + 1); 
+    addKnightLeaps(r, c, r - 2, c - 1); 
+}
+
+void LegalBoard::updatePawnMoves(Pos p) {
+    int r = p.getFile(), c = p.getFile();
+    if ((*b[r][c]).getSide() == Side::W) {
+        if (!b[r - 1][c].isEmpty() && ((*b[r - 1][c]).getSide() != turn)) {
+            
+        }
+        if (r == 6) legalMoves.push_back()
+    }
+}
+
 bool LegalBoard::insufficientMaterial() {
     int knightCount = 0;
     int bishopCount = 0;
