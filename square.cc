@@ -11,9 +11,9 @@ void Square::move(Square &s) {
     p = nullptr; 
 }
 
-bool Square::isEmpty() { return p == nullptr; }
+bool Square::isEmpty() const { return p == nullptr; }
 
-void Square::setEmpty() { 
+void Square::setEmpty() const { 
     if (p) {
         delete p;
         p = nullptr;
@@ -30,4 +30,5 @@ void Square::setAttacked(bool val) { attacked = 0; }
 
 Piece& Square::operator*() const { return *p; }
 
+bool Square::isAttacked() const { return attacked; }
 Square::~Square() { delete p; }

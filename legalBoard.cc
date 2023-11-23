@@ -10,6 +10,10 @@ void LegalBoard::updateLegalMoves() {
     }
 }
 
+bool LegalBoard::inBounds(int x, int y) {
+    return (x >= 0) && (x < 8) && (y >= 0) && (y < 8); 
+}
+
 void LegalBoard::generateAttackMap() {
     Side attackingSide = turn == Side::W ? Side::B : Side::W; 
 
@@ -24,6 +28,7 @@ void LegalBoard::generateAttackMap() {
             if (b[i][j].isEmpty() || (*b[i][j]).getSide() == turn) continue;
 
             char p = getPiece(i, j);  
+
             // square contains a knight, pawn, or king (leaping pieces) 
             // Knight:
             if (p == 'n' || p == 'N') {
@@ -105,7 +110,26 @@ void LegalBoard::generateAttackMap() {
 }
 
 void LegalBoard::updateKingMoves(Pos p) {
-    for (int i = p.getFile)
+    generateAttackMap(); 
+    int r = p.getRank(), c = p.getFile(); 
+
+    // 3 squares above King
+    if (r - 1 >= 0 && r - 1 < 8) {
+        for (int i = c - 1; i <= c + 1; i++) {
+            if (!b[r - 1][i].isAttacked()) legalMoves.push_back(Move{p, Pos{r - 1, c}}); 
+        }
+    }
+
+    // 2 squares on each side of King
+    if (!b[r][c - 1].isAttacked()) legalMoves.push_back(Move{p, Pos{r, c - 1}}); 
+    if (!b[r][c + 1].isAttacked()) legalMoves.push_back(Move{p, Pos{r, c + 1}}); 
+
+    // 3 squares below King 
+    if (r + 1 >= 0 && r + 1 < 8) {
+        for (int i = c - 1; i <= c + 1; i++) {
+            if (!b[r + 1][i].isAttacked()) legalMoves.push_back(Move{p, Pos{r + 1, c}}); 
+        }
+    }
 }
 
 void LegalBoard::updateQueenMoves(Pos p) {
@@ -154,7 +178,7 @@ bool LegalBoard::insufficientMaterial() {
     bool majorPieceOrPawn = false;
 }
 void LegalBoard::updateState() {}
-Side LegalBoard::getTurn() {}
+Side LegalBoard::getTurn() { return turn; }
 
 bool LegalBoard::move(Move m) {
     bool proceed = 0; 

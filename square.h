@@ -12,10 +12,11 @@ class Square {
         Square();
         Square(Piece *p); 
         void move(Square &s); // move piece to s, handles captures too
-        void setEmpty(); // remove piece from square
-        bool isEmpty(); // square doesn't contain a piece
+        void setEmpty() const; // remove piece from square
+        bool isEmpty() const; // square doesn't contain a piece
         void addPiece(char piece); // add piece to square
         void setAttacked(bool val); 
+        bool isAttacked() const; // square is under attack
         ~Square(); 
 }; 
 
