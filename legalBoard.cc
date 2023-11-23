@@ -21,7 +21,7 @@ void LegalBoard::generateAttackMap() {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
 
-            if (b[i][j].isEmpty()) continue;
+            if (b[i][j].isEmpty() || (*b[i][j]).getSide() == turn) continue;
 
             char p = getPiece(i, j);  
             // square contains a knight, pawn, or king (leaping pieces) 
@@ -105,10 +105,7 @@ void LegalBoard::generateAttackMap() {
 }
 
 void LegalBoard::updateKingMoves(Pos p) {
-    if (r - 1 >= 0 && ((*b[r-1][c]).getSide() != turn)) legalMoves.push_back(Move{p, Pos{r-1, c}}); // move 1 square above
-    if (r + 1 <= 7 && ((*b[r+1][c]).getSide() != turn)) legalMoves.push_back(Move{p, Pos{r+1, c}}); // move 1 square below
-    if (c - 1 >= 0 && ((*b[r][c-1]).getSide() != turn)) legalMoves.push_back(Move{p, Pos{r, c-1}}); // move 1 square to the left
-    if (c + 1 <= 7 && ((*b[r][c+1]).getSide() != turn)) legalMoves.push_back(Move{p, Pos{r, c+1}}); // move 1 square to the right
+    for (int i = p.getFile)
 }
 
 void LegalBoard::updateQueenMoves(Pos p) {
