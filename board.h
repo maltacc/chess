@@ -16,11 +16,11 @@ class Board {
     public: 
         Board(); 
         void clear(); // clears board for new game
-        void place(char piece, Pos pos); 
+        void place(Piece piece, Pos pos); 
         void remove(Pos p); 
         State getState();
         Side getTurn();
-        char getPiece(int i, int j); 
+        Piece getPiece(int i, int j); 
         void setTurn(Side s);
         virtual bool move(Move m);
         void attach(Observer* o); // observer pattern

@@ -5,7 +5,7 @@ Board::Board(): state{State::None}, turn{Side::W} {}
 
 void Board::clear() {}
 
-void Board::place(char piece, Pos pos) {
+void Board::place(Piece piece, Pos pos) {
     b[pos.getRank()][pos.getFile()].addPiece(piece);
     notifyObservers(); 
 } 
@@ -20,7 +20,7 @@ void Board::remove(Pos p) {
 bool Board::move(Move m) {
     b[m.getStart().getRank()][m.getStart().getFile()].move(b[m.getEnd().getRank()][m.getEnd().getFile()]);
     notifyObservers(); 
-    return true;
+    return 1;
 }
 
 void Board::attach(Observer* o) { observers.emplace_back(o); }
@@ -29,12 +29,11 @@ void Board::notifyObservers() {
     for (auto o: observers) o->notify(*this); 
 }
 
-char Board::getPiece(int i, int j) {
-    if (b[i][j].isEmpty()) return '_'; // in case we call an unoccupied square
-    return (*b[i][j]).getType(); 
+Piece Board::getPiece(int i, int j) {
+    return b[i][j];
 }
 
-State Board::getState(){ return state; }
+State Board::getState() { return state; }
 
 Side Board::getTurn() { return turn; }
 

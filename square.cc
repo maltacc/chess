@@ -13,22 +13,22 @@ void Square::move(Square &s) {
 
 bool Square::isEmpty() const { return p == nullptr; }
 
-void Square::setEmpty() const { 
+void Square::setEmpty() { 
     if (p) {
         delete p;
         p = nullptr;
     }
 }
 
-void Square::addPiece(char piece) {
+void Square::addPiece(Piece piece) {
     if (p) delete p; 
-    if (piece >= 'a' && piece <= 'z') p = new Piece{piece, Side::B};
-    else p = new Piece{piece, Side::W}; 
+    p = new Piece{piece.getType(), piece.getSide()};
 }
 
-void Square::setAttacked(bool val) { attacked = 0; }
+void Square::setAttacked(bool val) { attacked = 1; }
 
 Piece& Square::operator*() const { return *p; }
 
 bool Square::isAttacked() const { return attacked; }
+
 Square::~Square() { delete p; }

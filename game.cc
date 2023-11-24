@@ -20,8 +20,9 @@ void Game::setupCustom(istream &in) {
         if (cmd == "+") {
             char piece; 
             string pos; 
-            in >> piece >> pos; 
-            b.place(piece, Pos{pos});
+            in >> piece >> pos;
+            if (b.getTurn() == Side::W) b.place(Piece{piece, Side::W}, Pos{pos});
+            else b.place(Piece{piece, Side::B}, Pos{pos});
         }
         else if (cmd == "-") {
             string pos; 
@@ -38,30 +39,30 @@ void Game::setupCustom(istream &in) {
 }
 
 void Game::setupDefault() {
-    b.place('K', Pos{"e1"});// set up Kings 
-    b.place('k', Pos{"e8"}); 
+    b.place(Piece{Type::K, Side::W}, Pos{"e1"});// set up Kings 
+    b.place(Piece{Type::K, Side::B}, Pos{"e8"}); 
 
-    b.place('Q', Pos{"d1"}); // set up Queens
-    b.place('q', Pos{"d8"}); 
+    b.place(Piece{Type::Q, Side::W}, Pos{"d1"}); // set up Queens
+    b.place(Piece{Type::Q, Side::B}, Pos{"d8"}); 
 
-    b.place('B', Pos{"f1"}); // set up Bishops
-    b.place('B', Pos{"c1"});
-    b.place('b', Pos{"f8"}); 
-    b.place('b', Pos{"c8"});
+    b.place(Piece{Type::B, Side::W}, Pos{"f1"}); // set up Bishops
+    b.place(Piece{Type::B, Side::W}, Pos{"c1"});
+    b.place(Piece{Type::B, Side::B}, Pos{"f8"}); 
+    b.place(Piece{Type::B, Side::B}, Pos{"c8"});
 
-    b.place('R', Pos{"a1"}); // set up Rooks
-    b.place('R', Pos{"h1"}); 
-    b.place('r', Pos{"a8"}); 
-    b.place('r', Pos{"h8"}); 
+    b.place(Piece{Type::R, Side::W}, Pos{"a1"}); // set up Rooks
+    b.place(Piece{Type::R, Side::W}, Pos{"h1"}); 
+    b.place(Piece{Type::R, Side::B}, Pos{"a8"}); 
+    b.place(Piece{Type::R, Side::B}, Pos{"h8"}); 
 
-    b.place('N', Pos{"b1"}); // set up Knights
-    b.place('N', Pos{"g1"});
-    b.place('n', Pos{"b8"});
-    b.place('n', Pos{"g8"});
+    b.place(Piece{Type::N, Side::W}, Pos{"b1"}); // set up Knights
+    b.place(Piece{Type::N, Side::W}, Pos{"g1"});
+    b.place(Piece{Type::N, Side::B}, Pos{"b8"});
+    b.place(Piece{Type::N, Side::B}, Pos{"g8"});
 
     for (int i = 0; i < 7; i++) {
-        b.place('P', Pos{6, i}); // place white pawns
-        b.place('p', Pos{1, i}); // place black pawns
+        b.place(Piece{Type::P, Side::W}, Pos{6, i}); // place white pawns
+        b.place(Piece{Type::P, Side::B}, Pos{1, i}); // place black pawns
     }
 }
 

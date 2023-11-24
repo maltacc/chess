@@ -61,7 +61,7 @@ int main() {
                         char piece; 
                         string pos; 
                         cin >> piece >> pos; 
-                        b.place(piece, Pos{pos});
+                        b.place(Piece{piece}, Pos{pos});
                     }
                     else if (op == '-') {
                         string pos; 

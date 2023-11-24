@@ -60,7 +60,7 @@ class LegalBoard: public Board {
     public:
         Side getTurn();
         bool move(Move m) override;
-        void promote(char piece); // Does nothing if there is no pawn to promote
+        void promote(Type piece); // Does nothing if there is no pawn to promote
 
         auto begin(); 
         auto end();
