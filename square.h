@@ -5,17 +5,18 @@
 
 class Square {
     Piece *p = nullptr; 
-    bool attacked = 0; // square is attacked
+    int attacked = 0; // square is attacked
 
     public: 
-        Piece& operator*() const;
+        const Piece * piece();
         Square();
         Square(Piece *p); 
         void move(Square &s); // move piece to s, handles captures too
         void setEmpty(); // remove piece from square
         bool isEmpty() const; // square doesn't contain a piece
         void addPiece(Piece piece); // add piece to square
-        void setAttacked(bool val); 
+        void setAttacked(int i);
+        void addAttacked(); 
         bool isAttacked() const; // square is under attack
         ~Square(); 
 }; 

@@ -13,6 +13,10 @@ Piece::Piece(char piece, Side s): side{s} {
     else if (piece == 'R') type = Type::R; 
 }
 
-Type Piece::getType() { return type; }
+Type Piece::getType() const { return type; }
 
-Side Piece::getSide() { return side; }
+Side Piece::getSide() const { return side; }
+
+bool Piece::operator==(const Piece &other) const{
+    return type == other.type && side == other.side;
+}

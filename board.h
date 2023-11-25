@@ -20,7 +20,7 @@ class Board {
         void remove(Pos p); 
         State getState();
         Side getTurn();
-        Piece getPiece(int i, int j); 
+        const Piece* getPiece(int i, int j); 
         void setTurn(Side s);
         virtual bool move(Move m);
         void attach(Observer* o); // observer pattern

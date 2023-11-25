@@ -1,13 +1,12 @@
 #include "legalBoard.h"
 using namespace std;
 
-void LegalBoard::updateLegalMoves() {
-    legalMoves.clear(); 
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            
-        }
-    }
+bool LegalBoard::sameType(int rank_index, int file_index, Type t) {
+    return b[rank_index][file_index].piece()->getType() == t;
+}
+
+bool LegalBoard::sameSide(int rank_index, int file_index, Side s) {
+    return b[rank_index][file_index].piece()->getSide() == s;
 }
 
 bool LegalBoard::inBounds(int x, int y) {
@@ -19,8 +18,8 @@ void LegalBoard::addDiagonals(int r, int c) {
         for (int i = r, j = c; i >= 0 && j <= 7; i--, j++) { 
             if (b[i][j].isEmpty()) legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}}); 
             else {
-                if ((*b[i][j]).getType() == Type::K) continue; // ignore the king
-                if ((*b[i][j]).getSide() != turn) 
+                if (sameType(i, j, Type::K)) continue; // ignore the king
+                if (!sameSide(i, j, turn))
                     legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}});  // enemy piece, can capture
                 break;  // can only capture or move until the first enemy piece it encounters
             }
@@ -30,8 +29,8 @@ void LegalBoard::addDiagonals(int r, int c) {
         for (int i = r, j = c; i >= 0 && j >= 0; i--, j--) { 
             if (b[i][j].isEmpty()) legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}}); 
             else {
-                if ((*b[i][j]).getType() == Type::K) continue; // ignore the king
-                if ((*b[i][j]).getSide() != turn) 
+                if (sameType(i, j, Type::K)) continue; // ignore the king
+                if (!sameSide(i, j, turn))
                     legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}});  // enemy piece, can capture
                 break;  // can only capture or move until the first enemy piece it encounters
             }
@@ -41,8 +40,8 @@ void LegalBoard::addDiagonals(int r, int c) {
         for (int i = r, j = c; i <= 7 && j <= 7; i++, j++) { 
             if (b[i][j].isEmpty()) legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}}); 
             else {
-                if ((*b[i][j]).getType() == Type::K) continue; // ignore the king
-                if ((*b[i][j]).getSide() != turn) 
+                if (sameType(i, j, Type::K)) continue; // ignore the king
+                if (!sameSide(i, j, turn))
                     legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}});  // enemy piece, can capture
                 break;  // can only capture or move until the first enemy piece it encounters
             }
@@ -52,8 +51,8 @@ void LegalBoard::addDiagonals(int r, int c) {
         for (int i = r, j = c; i <= 7 && j >= 0; i++, j--) { 
             if (b[i][j].isEmpty()) legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}}); 
             else {
-                if ((*b[i][j]).getType() == Type::K) continue; // ignore the king
-                if ((*b[i][j]).getSide() != turn) 
+                if (sameType(i, j, Type::K)) continue; // ignore the king
+                if (!sameSide(i, j, turn))
                     legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}});  // enemy piece, can capture
                 break;  // can only capture or move until the first enemy piece it encounters
             }
@@ -66,8 +65,8 @@ void LegalBoard::addPerpendiculars(int r, int c) {
         if (b[i][c].isEmpty()) legalMoves.push_back(Move{Pos{r, c}, Pos{i, c}}); 
         else {
             // Q: do we wanna ignore the king if this isn't an attack map?
-            if ((*b[i][c]).getType() == Type::K) continue; // ignore the king
-            if ((*b[i][c]).getSide() != turn) 
+            if (sameType(i, c, Type::K)) continue; // ignore the king
+            if (!sameSide(i, c, turn)) 
                 legalMoves.push_back(Move{Pos{r, c}, Pos{i, c}});  // enemy piece, can capture
             break;  // can only capture or move until the first enemy piece it encounters
         }
@@ -77,8 +76,8 @@ void LegalBoard::addPerpendiculars(int r, int c) {
     for (int i = r + 1; i < 8; i++) {
         if (b[i][c].isEmpty()) legalMoves.push_back(Move{Pos{r, c}, Pos{i, c}}); 
         else {
-            if ((*b[i][c]).getType() == Type::K) continue; // ignore the king
-            if ((*b[i][c]).getSide() != turn) 
+            if (sameType(i, c, Type::K)) continue; // ignore the king
+            if (!sameSide(i, c, turn)) 
                 legalMoves.push_back(Move{Pos{r, c}, Pos{i, c}});  // enemy piece, can capture
             break;  // can only capture or move until the first enemy piece it encounters
         }
@@ -88,8 +87,8 @@ void LegalBoard::addPerpendiculars(int r, int c) {
     for (int i = c; i >= 0; i--) {
         if (b[r][i].isEmpty()) legalMoves.push_back(Move{Pos{r, c}, Pos{r, i}}); 
         else {
-            if ((*b[r][i]).getType() == Type::K) continue; // ignore the king
-            if ((*b[r][i]).getSide() != turn) 
+            if (sameType(r, i, Type::K)) continue; // ignore the king
+            if (!sameSide(r, i, turn)) 
                 legalMoves.push_back(Move{Pos{r, c}, Pos{r, i}});  // enemy piece, can capture
             break;  // can only capture or move until the first enemy piece it encounters
         }
@@ -99,8 +98,8 @@ void LegalBoard::addPerpendiculars(int r, int c) {
     for (int i = c; i < 8; i++) {
         if (b[r][i].isEmpty()) legalMoves.push_back(Move{Pos{r, c}, Pos{r, i}}); 
         else {
-            if ((*b[r][i]).getType() == Type::K) continue; // ignore the king
-            if ((*b[r][i]).getSide() != turn) 
+            if (sameType(r, i, Type::K)) continue; // ignore the king
+            if (!sameSide(r, i, turn)) 
                 legalMoves.push_back(Move{Pos{r, c}, Pos{r, i}});  // enemy piece, can capture
             break;  // can only capture or move until the first enemy piece it encounters
         }
@@ -108,7 +107,7 @@ void LegalBoard::addPerpendiculars(int r, int c) {
 }
 
 void LegalBoard::generateAttackMap() {
-    Side attackingSide = turn == Side::W ? Side::B : Side::W; 
+    Side attackingSide = (turn == Side::W ? Side::B : Side::W); 
 
     // reset attack map
     for (int i = 0; i < 8; i++) {
@@ -118,98 +117,102 @@ void LegalBoard::generateAttackMap() {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
 
-            if (b[i][j].isEmpty() || (*b[i][j]).getSide() == turn) continue;
+            if (b[i][j].isEmpty() || getPiece(i, j)->getSide() == turn) continue;
 
-            Type p = getPiece(i, j).getType();  
+            Type p = getPiece(i, j)->getType();  
 
             // square contains a knight, pawn, or king (leaping pieces) 
             // Knight:
             if (p == Type::N) {
-                if (inBounds(i+2, j+1)) b[i+2][j+1].setAttacked(1); 
-                if (inBounds(i-2, j+1)) b[i-2][j+1].setAttacked(1); 
-                if (inBounds(i+2, j-1)) b[i+2][j-1].setAttacked(1); 
-                if (inBounds(i-2, j-1)) b[i-2][j-1].setAttacked(1); 
-                if (inBounds(i+1, j+2)) b[i+1][j+2].setAttacked(1); 
-                if (inBounds(i-1, j+2)) b[i-1][j+2].setAttacked(1); 
-                if (inBounds(i+1, j-2)) b[i+1][j-2].setAttacked(1); 
-                if (inBounds(i-1, j-2)) b[i-1][j-2].setAttacked(1); 
+                if (inBounds(i+2, j+1)) b[i+2][j+1].addAttacked(); 
+                if (inBounds(i-2, j+1)) b[i-2][j+1].addAttacked(); 
+                if (inBounds(i+2, j-1)) b[i+2][j-1].addAttacked(); 
+                if (inBounds(i-2, j-1)) b[i-2][j-1].addAttacked(); 
+                if (inBounds(i+1, j+2)) b[i+1][j+2].addAttacked(); 
+                if (inBounds(i-1, j+2)) b[i-1][j+2].addAttacked(); 
+                if (inBounds(i+1, j-2)) b[i+1][j-2].addAttacked(); 
+                if (inBounds(i-1, j-2)) b[i-1][j-2].addAttacked(); 
             }
             
             // Pawn:
             if (p == Type::P) {
-                if ((*b[i][j]).getSide() == Side::B) {
-                    if (inBounds(i+1, j-1)) b[i+1][j-1].setAttacked(1); 
-                    if (inBounds(i+1, j+1)) b[i+1][j+1].setAttacked(1); 
+                if (getPiece(i, j)->getSide() == Side::B) {
+                    if (inBounds(i+1, j-1)) b[i+1][j-1].addAttacked();
+                    if (inBounds(i+1, j+1)) b[i+1][j+1].addAttacked(); 
                 }
                 else {
-                    if (inBounds(i-1, j-1)) b[i-1][j-1].setAttacked(1); 
-                    if (inBounds(i-1, j+1)) b[i-1][j+1].setAttacked(1); 
+                    if (inBounds(i-1, j-1)) b[i-1][j-1].addAttacked(); 
+                    if (inBounds(i-1, j+1)) b[i-1][j+1].addAttacked(); 
                 }
             }
 
             // King:
             if (p == Type::K) {
-                if (inBounds(i+1, j+1)) b[i+1][j+1].setAttacked(1); 
-                if (inBounds(i+1, j)) b[i+1][j].setAttacked(1); 
-                if (inBounds(i+1, j-1)) b[i+1][j-1].setAttacked(1); 
-                if (inBounds(i, j+1)) b[i][j+1].setAttacked(1); 
-                if (inBounds(i, j-1)) b[i][j-1].setAttacked(1); 
-                if (inBounds(i-1, j+1)) b[i-1][j+1].setAttacked(1); 
-                if (inBounds(i-1, j)) b[i-1][j].setAttacked(1); 
-                if (inBounds(i-1, j-1)) b[i-1][j-1].setAttacked(1); 
+                if (inBounds(i+1, j+1)) b[i+1][j+1].addAttacked();
+                if (inBounds(i+1, j)) b[i+1][j].addAttacked();
+                if (inBounds(i+1, j-1)) b[i+1][j-1].addAttacked(); 
+                if (inBounds(i, j+1)) b[i][j+1].addAttacked();
+                if (inBounds(i, j-1)) b[i][j-1].addAttacked(); 
+                if (inBounds(i-1, j+1)) b[i-1][j+1].addAttacked(); 
+                if (inBounds(i-1, j)) b[i-1][j].addAttacked();
+                if (inBounds(i-1, j-1)) b[i-1][j-1].addAttacked(); 
             }
 
             // Diagonal Moves (Bishop or Queen):
             if (p == Type::B || p == Type::Q) {
                 for (int r = i - 1, c = j + 1; r >= 0 && c <= 7; r--, c++) {
-                    b[r][c].setAttacked(1); 
-                    if (!b[r][c].isEmpty() && (getPiece(r, c).getType() == Type::K)) break; // does the piece have to be a specific color?
+                    b[r][c].addAttacked();
+                    if (!b[r][c].isEmpty() && !(*getPiece(r, c) == Piece(Type::K, turn))) break; // does the piece have to be a specific color?
                 }
                 for (int r = i + 1, c = j + 1; r <= 7 && c <= 7; r++, c++) {
-                    b[r][c].setAttacked(1); 
-                    if (!b[r][c].isEmpty() && (getPiece(r, c).getType() == Type::K)) break;
+                    b[r][c].addAttacked(); 
+                    if (!b[r][c].isEmpty() && !(*getPiece(r, c) == Piece(Type::K, turn))) break;
                 }
                 for (int r = i - 1, c = j - 1; r >= 0 && c >= 0; r--, c--) {
-                    b[r][c].setAttacked(1); 
-                    if (!b[r][c].isEmpty() && (getPiece(r, c).getType() == Type::K)) break;
+                    b[r][c].addAttacked(); 
+                    if (!b[r][c].isEmpty() && !(*getPiece(r, c) == Piece(Type::K, turn))) break;
                 }
                 for (int r = i + 1, c = j - 1; r <= 7 && c >= 0; r++, c--) {
-                    b[r][c].setAttacked(1); 
-                    if (!b[r][c].isEmpty() && (getPiece(r, c).getType() == Type::K)) break;
+                    b[r][c].addAttacked(); 
+                    if (!b[r][c].isEmpty() && !(*getPiece(r, c) == Piece(Type::K, turn))) break;
                 }
             }
 
-            // Perpendicular Moves (Rook or Queen):
-            if (p == 'r' || p == 'R' || p == 'q' || p == 'Q') {
+            // Manhattan Moves (Rook or Queen):
+            if (p == Type::R || p == Type::Q) {
                 for (int r = i + 1; r < 8; r++){
-                    b[r][j].setAttacked(1); 
-                    if (!b[r][j].isEmpty() && !getPiece(r, j) == (turn == Side::W ? 'K' : 'k')) break;
+                    b[r][j].addAttacked();
+                    if (!b[r][j].isEmpty() && !(*getPiece(r, j) == Piece(Type::K, turn))) break;
                 }
                 for (int r = i - 1; r >= 0; r--){
-                    b[r][j].setAttacked(1); 
-                    if (!b[r][j].isEmpty() && !getPiece(r, j) == (turn == Side::W ? 'K' : 'k')) break;
+                    b[r][j].addAttacked(); 
+                    if (!b[r][j].isEmpty() && !(*getPiece(r, j) == Piece(Type::K, turn))) break;
                 }
                 for (int c = j + 1; c < 8; c++){
-                    b[i][c].setAttacked(1); 
-                    if (!b[i][c].isEmpty() && !getPiece(i, c) == (turn == Side::W ? 'K' : 'k')) break;
+                    b[i][c].addAttacked(); 
+                    if (!b[i][c].isEmpty() && !(*getPiece(i, c) == Piece(Type::K, turn))) break;
                 }
                 for (int c = j - 1; c >= 0; c--){
-                    b[i][c].setAttacked(1); 
-                    if (!b[i][c].isEmpty() && !getPiece(i, c) == (turn == Side::W ? 'K' : 'k')) break;
+                    b[i][c].addAttacked(); 
+                    if (!b[i][c].isEmpty() && !(*getPiece(i, c) == Piece(Type::K, turn))) break;
                 }
             }
         }
     }
 }
 
+bool LegalBoard::canKingBeHere(int rank_index, int file_index){
+    return !b[rank_index][file_index].isAttacked() && 
+        (b[rank_index][file_index].isEmpty() || b[rank_index][file_index].piece()->getSide() != turn);
+}
+
 void LegalBoard::updateKingMoves(Pos p) {
-    generateAttackMap(); 
     int r = p.getRank(), c = p.getFile(); 
 
     // 3 squares above King
-    if (r - 1 >= 0 && r - 1 < 8) {
+    if (r - 1 >= 0) {
         for (int i = c - 1; i <= c + 1; i++) {
-            if (!b[r - 1][i].isAttacked()) legalMoves.push_back(Move{p, Pos{r - 1, c}}); 
+            if (canKingBeHere(r - 1, i)) legalMoves.push_back(Move{p, Pos{r - 1, c}}); 
         }
     }
 
@@ -243,7 +246,7 @@ void LegalBoard::updateBishopMoves(Pos p) {
 
 void LegalBoard::addKnightLeaps(int ri, int ci, int rf, int cf) {
     if (inBounds(rf, cf)) {
-        if (b[rf][cf].isEmpty() || (*b[rf][cf]).getSide() != turn) 
+        if (b[rf][cf].isEmpty() || b[rf][cf].piece()->getSide() != turn) 
             legalMoves.push_back(Move{Pos{ri, ci}, Pos{rf, cf}});   
     }
 }
@@ -262,11 +265,11 @@ void LegalBoard::updateKnightMoves(Pos p) {
 
 void LegalBoard::updatePawnMoves(Pos p) {
     int r = p.getFile(), c = p.getFile();
-    if ((*b[r][c]).getSide() == Side::W) {
+    if (sameSide(r, c, Side::W)) {
         if (inBounds(r - 1, c) && b[r - 1][c].isEmpty()) legalMoves.push_back(Move{p, Pos{r - 1, c}}); 
         if (inBounds(r - 2, c) && b[r - 2][c].isEmpty() && (r == 6)) legalMoves.push_back(Move{p, Pos{r - 2, c}}); 
     }
-    if ((*b[r][c]).getSide() == Side::B) {
+    if (sameSide(r, c, Side::B)) {
         if (inBounds(r + 1, c) && b[r + 1][c].isEmpty()) legalMoves.push_back(Move{p, Pos{r - 1, c}}); 
         if (inBounds(r + 2, c) && b[r + 2][c].isEmpty() && (r == 1)) legalMoves.push_back(Move{p, Pos{r - 2, c}}); 
     }
@@ -280,7 +283,7 @@ bool LegalBoard::insufficientMaterial() {
     bool majorPieceOrPawn = false; // if you find a rook or queen or pawn, the game can be won
     for (int r = 0; r < 8; r++) {
         for (int c = 0; c < 8; c++) {
-            Type p = (*b[r][c]).getType(); 
+            Type p = b[r][c].piece()->getType(); 
             if (p == Type::R || p == Type::Q || p == Type::P) return 0; 
             else if (p == Type::N) {
                 knightCount++; 
@@ -314,14 +317,43 @@ bool LegalBoard::move(Move m) {
     return 1; // move was successful
 }
 
-void LegalBoard::promote(Piece piece) {
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            if (getPiece(i, j).getType() == Type::P) {
-                b[i][j].addPiece(piece); 
-            }
+void LegalBoard::promote(Type type) {
+    int rank_index = (turn == Side::W ? 0 : 7);
+    for (int j = 0; j < 8; j++) {
+        if (sameType(rank_index, j, Type::P)) {
+            b[rank_index][j].addPiece(Piece(type, turn)); 
         }
     }
 }
 auto LegalBoard::begin(){ return legalMoves.begin(); }
 auto LegalBoard::end(){ return legalMoves.end(); }
+
+void LegalBoard::updateLegalMoves() {
+    legalMoves.clear(); 
+    generateAttackMap();
+    
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if (!sameSide(i, j, turn)) continue;
+            switch (b[i][j].piece()->getType()){
+                case Type::B:
+                    updateBishopMoves(Pos(i, j));
+                    break;
+                case Type::P:
+                    updatePawnMoves(Pos(i, j));
+                    break;
+                case Type::R:
+                    updateRookMoves(Pos(i, j));
+                    break;
+                case Type::N:
+                    updateKnightMoves(Pos(i, j));
+                    break;
+                case Type::Q:
+                    updateQueenMoves(Pos(i, j));
+                    break;
+                default:
+                    updateKingMoves(Pos(i, j));
+            }
+        }
+    }
+}

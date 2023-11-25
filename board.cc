@@ -29,8 +29,8 @@ void Board::notifyObservers() {
     for (auto o: observers) o->notify(*this); 
 }
 
-Piece Board::getPiece(int i, int j) {
-    return b[i][j];
+const Piece * Board::getPiece(int i, int j) {
+    return b[i][j].piece();
 }
 
 State Board::getState() { return state; }

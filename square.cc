@@ -25,10 +25,12 @@ void Square::addPiece(Piece piece) {
     p = new Piece{piece.getType(), piece.getSide()};
 }
 
-void Square::setAttacked(bool val) { attacked = 1; }
+void Square::setAttacked(int i) { attacked = i; }
 
-Piece& Square::operator*() const { return *p; }
+void Square::addAttacked() { attacked++; }
 
 bool Square::isAttacked() const { return attacked; }
+
+const Piece * Square::piece() { return p; };
 
 Square::~Square() { delete p; }

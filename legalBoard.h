@@ -14,6 +14,7 @@ class LegalBoard: public Board {
 
     Side turn;
     bool whiteCheck, blackCheck;
+    int kingAttackers = 0;
     vector<Move> legalMoves; // stores legal moves for 1 turn at a time
     canCastle castle{};
 
@@ -56,6 +57,12 @@ class LegalBoard: public Board {
     void addPerpendiculars(int r, int c); 
 
     void addKnightLeaps(int ri, int ci, int rf, int cf); 
+
+    bool canKingBeHere(int rank_index, int file_index);
+
+    bool sameType(int rank_index, int file_index, Type t);
+
+    bool sameSide(int rank_index, int file_index, Side s);
     
     public:
         Side getTurn();

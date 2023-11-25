@@ -9,10 +9,11 @@ class Piece {
     Side side; 
 
     public: 
+        bool operator==(const Piece &other) const;
         Piece(Type t, Side s); 
         Piece(char piece, Side s); 
-        Type getType(); // return char of piece
-        Side getSide(); // get colour of piece
+        Type getType() const; // return char of piece
+        Side getSide() const; // get colour of piece
         ~Piece(); 
 }; 
 
