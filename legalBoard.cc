@@ -107,7 +107,7 @@ void LegalBoard::generateAttackMap() {
 
             // Manhattan Moves (Rook or Queen):
             if (p == Type::R || p == Type::Q) {
-                for (int i = 0; i < 4; i++) attackDir(i, j, PERPDIR[i][0], PERPDIR[i][1]); 
+                for (int i = 0; i < 4; i++) attackDir(i, j, DIAGDIR[i][0], DIAGDIR[i][1]); 
             }
         }
     }
@@ -116,6 +116,17 @@ void LegalBoard::generateAttackMap() {
 bool LegalBoard::canKingBeHere(int rankIndex, int fileIndex){
     return inBounds(rankIndex, fileIndex) && !b[rankIndex][fileIndex].isAttacked() && 
         (b[rankIndex][fileIndex].isEmpty() || !sameSide(rankIndex, fileIndex, turn));
+}
+
+void LegalBoard::updateCurrentKingLocation() {
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if (sameType(i, j, Type::K) && sameSide(i, j, turn)){
+                if (turn == Side::W) whiteKing = Pos(i, j);
+                else blackKing = Pos(i, j);
+            }
+        }
+    }
 }
 
 int LegalBoard::kingAttackerCount(){
@@ -267,12 +278,26 @@ bool LegalBoard::isPinned(int rankIndex, int fileIndex){
     // - If this piece is on the same file/rank: (this is the else statement)
     //    - If this piece is between rook/queen and our king return true;
     //    - return false;
+
+    Pos kingPos = (turn == Side::W ? whiteKing : blackKing);
+    int rankDiff = kingPos.getRank() - rankIndex;
+    int fileDiff = kingPos.getFile() - rankIndex;
+    if (rankDiff == 0 && fileDiff == 0) return false;
+    if (rankDiff == fileDiff || rankDiff == -1 * fileDiff){
+        int rankDir = rankDiff / (rankDiff < 0 ? -1 * rankDiff : rankDiff);
+        int fileDir = fileDiff / (fileDiff < 0 ? -1 * fileDiff : fileDiff);
+        for (int i = rankIndex, int j = fileIndex; i < DIR && i >= 0, j < DIR && j >= 0; i += rankDir, j += fileDir){
+
+        }
+    }
     return false;
 }
 
 void LegalBoard::updateLegalMoves() {
     legalMoves.clear(); 
     generateAttackMap();
+    updateCurrentKingLocation();
+    kingAttackers = kingAttackerCount();
     
     for (int i = 0; i < DIM; i++) {
         for (int j = 0; j < DIM; j++) {
@@ -300,3 +325,5 @@ void LegalBoard::updateLegalMoves() {
         }
     }
 }
+
+LegalBoard::~LegalBoard() {}

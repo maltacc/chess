@@ -11,7 +11,6 @@ class Board {
     protected:
         Square b[8][8];
         vector<Observer*> observers;
-        Pos whiteKing, blackKing;
         State state;
         Side turn; 
 
@@ -27,7 +26,7 @@ class Board {
         virtual bool move(Move m);
         void attach(Observer* o); // observer pattern
         void notifyObservers(); 
-        virtual ~Board();
+        virtual ~Board() noexcept;
 }; 
 
 #endif

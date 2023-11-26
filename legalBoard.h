@@ -14,6 +14,7 @@ class LegalBoard: public Board {
     };
 
     bool whiteCheck, blackCheck;
+    Pos whiteKing = Pos(4, 7), blackKing = Pos(4, 0);
     int kingAttackers = 0;
     vector<Move> legalMoves; // stores legal moves for 1 turn at a time
     canCastle castle{};
@@ -90,6 +91,7 @@ class LegalBoard: public Board {
 
         auto legalMovesBegin(); 
         auto legalMovesEnd();
+        ~LegalBoard() noexcept;
 
 };
 
