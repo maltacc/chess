@@ -16,7 +16,14 @@ class Board {
 
     public: 
         Board(); 
+        // The following 4 of the Big 5 will be used exclusively for copying/assigning 
+        // temporary boards for the Players. Since we don't wan't to notify observers, 
+        // we don't copy this field over
         Board(const Board &other); // copy ctor
+        Board(Board &&other); // move ctor
+        Board &operator=(const Board &other); // copy assignment operator
+        Board &operator=(Board &&other); // move assignment operator
+
         void clear(); // clears board for new game
         void place(Piece piece, Pos pos);
         void remove(Pos p);

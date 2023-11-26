@@ -13,7 +13,7 @@ class Game {
   Player *p1, *p2;
   LegalBoard b; 
   int whiteScore, blackScore; 
-  void setPlayer(string player, Player* p, Side s); // initialize player type and level 
+  void setPlayer(string player, Player* p); // initialize player type and level 
 
   public: 
     Game(); // based on string player type, convert

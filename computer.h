@@ -1,13 +1,15 @@
 #ifndef __COMPUTER_H__
 #define __COMPUTER_H__
 #include "player.h"
+#include <time.h>
+#include <stdlib.h>
 
 class Computer: public Player {
     Board *board;
 
     public: 
         Computer(Board *board);
-        virtual ~Computer() = 0;
+        virtual ~Computer();
 }; 
 
 #endif 

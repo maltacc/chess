@@ -1,14 +1,14 @@
 #include "game.h"
 using namespace std; 
 
-void Game::setPlayer(string player, Player *p, Side s) {
+void Game::setPlayer(string player, Player *p) {
     if (player == "human") p = new Human; 
     else {
         int lvl = player.back(); 
-        if (lvl == 1) p = new L1{s, &b};
-        else if (lvl == 2) p = new L2{s, &b}; 
-        else if (lvl == 3) p = new L3{s, &b}; 
-        else p = new L4{s, &b}; 
+        if (lvl == 1) p = new L1{&b};
+        else if (lvl == 2) p = new L2{&b}; 
+        else if (lvl == 3) p = new L3{&b}; 
+        else p = new L4{&b}; 
     }
 }
 

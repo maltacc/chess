@@ -11,10 +11,6 @@ Move L2::getMove() {
     // which we'll use to test moves
     LegalBoard tmpBoard = LegalBoard{*b}; 
 
-    // TO-DO: Find a way to simulate a move on a board. 
-    // We want to see if making a move puts the opp in check
-    // TO-DO: Find a way to undo our move to try the next move
-
     for (auto m: tmp) {
         int xf = m.getEnd().getRank(), yf = m.getEnd().getFile(); 
         // capturing move if ending position of move is on an
@@ -26,7 +22,7 @@ Move L2::getMove() {
             (tmpBoard.move(m) && tmpBoard.underCheck())) 
             favored.push_back(m); 
 
-        resetMove();
+        tmpBoard = LegalBoard{*b}; // undo the move
     }
 
     // randomly choose a move from favored moves

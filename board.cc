@@ -1,20 +1,47 @@
 #include "board.h"
 #include "consts.h"
 #include <string>
+#include <array>
 using namespace std; 
 
 Board::Board(): state{State::None}, turn{Side::W} {}
 
 Board::Board(const Board &other): state{other.state}, turn{other.turn} {
     // observers should be empty since we don't want to reflect changes
-    // copy Square array 
-    for (int r = 0; r < DIM; r++) 
+    
+    for (int r = 0; r < DIM; r++) // copy Square array 
         for (int c = 0; c < DIM; c++) {
             b[r][c] = Square{other.b[r][c]}; // copies the square and piece in it
         }
 }
 
-void Board::clear() {}
+Board::Board(Board &&other): state{other.state}, turn{other.turn} {
+    // observers shouldn't be copied over because the big 5 are used to 
+    // simulate valid moves, and we don't want observers to be notified 
+    std::swap(b, other.b);
+}
+
+Board& Board::operator=(const Board &other) {
+    if (this == &other) return *this; 
+    Board tmp = other;
+    std::swap(b, tmp.b); 
+    std::swap(state, tmp.state); 
+    std::swap(turn, tmp.turn); 
+    return *this; 
+}
+
+Board& Board::operator=(Board &&other) {
+    if (this == &other) return *this; 
+    std::swap(state, other.state); 
+    std::swap(turn, other.turn); 
+    std::swap(b, other.b); 
+    return *this; 
+} 
+
+void Board::clear() {
+    for (int r = 0; r < DIM; r++)
+        for (int c = 0; c < DIM; c++) b[r][c].setEmpty();
+}
 
 void Board::place(Piece piece, Pos pos) {
     b[pos.getRank()][pos.getFile()].addPiece(piece);
@@ -40,7 +67,7 @@ void Board::notifyObservers() {
     for (auto o: observers) o->notify(*this); 
 }
 
-const Piece * Board::getPiece(int i, int j) {
+const Piece* Board::getPiece(int i, int j) {
     return b[i][j].getPiece();
 }
 

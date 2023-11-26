@@ -17,6 +17,17 @@ Type Piece::getType() const { return type; }
 
 Side Piece::getSide() const { return side; }
 
+int Piece::getValue() const {
+    switch(type) {
+        case Type::Q: return 9; 
+        case Type::N: return 3; 
+        case Type::B: return 3; 
+        case Type::P: return 1; 
+        case Type::R: return 5;
+        default: return 0; 
+    }
+}
+
 bool Piece::operator==(const Piece &other) const{
     return type == other.type && side == other.side;
 }
