@@ -2,7 +2,6 @@
 #define __LEGALBOARD_H__
 #include "board.h"
 #include "consts.h"
-#include <vector>
 using namespace std;
 
 class LegalBoard: public Board {
@@ -13,11 +12,12 @@ class LegalBoard: public Board {
         bool whiteQueen = true; // White queen-side castle
     };
 
-    bool whiteCheck, blackCheck;
-    Pos whiteKing = Pos(4, 7), blackKing = Pos(4, 0);
+    Pos whiteKing = Pos{4, 7}, blackKing = Pos{4, 0};
     int kingAttackers = 0;
     vector<Move> legalMoves; // stores legal moves for 1 turn at a time
     canCastle castle{};
+
+    LegalBoard(const Board& other); // ctor 
 
     // Updates the legal moves for pieces matching Side turn.
     // Uses the following 6 fns to update the legal moves for all the pieces.
@@ -38,10 +38,7 @@ class LegalBoard: public Board {
 
     bool inBounds(int x, int y); 
 
-    void generateAttackMap(); 
-
-    // Checks if a square is under attack.
-    bool underCheck(Pos p, Side s);
+    void generateAttackMap();
 
     // Calculates if there is a draw by insufficient material.
     bool insufficientMaterial();
@@ -66,10 +63,10 @@ class LegalBoard: public Board {
     // Fn needs to be run after generateAttackMap().
     bool canKingBeHere(int rankIndex, int fileIndex);
 
-    int kingAttackerCount();
-
-    // Saves the location of the current King in either whiteKing or blackKing.
-    void updateCurrentKingLocation();
+    // Updates whether the current king is under check under whiteCheck / blackCheck,
+    // the number of attackers the king has, runs generateAttackMap, and updates the
+    // location of the king.
+    void updateKingInfo();
 
     bool sameType(int rankIndex, int fileIndex, Type t);
 
@@ -83,16 +80,18 @@ class LegalBoard: public Board {
     public:
         Side getTurn();
         bool move(Move m) override;
+
+        // Checks if the current player is under check.
+        bool underCheck();
+        
         void promote(Type piece); // Does nothing if there is no pawn to promote
         
         // Determines if the position that the user set up is valid or not.
         // e.g. Is there one king per team?
         bool isValidPosition();
 
-        auto legalMovesBegin(); 
-        auto legalMovesEnd();
+        const vector<Move>& getLegalMoves();
         ~LegalBoard() noexcept;
-
 };
 
 #endif

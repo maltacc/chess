@@ -16,6 +16,7 @@ class Board {
 
     public: 
         Board(); 
+        Board(const Board &other); // copy ctor
         void clear(); // clears board for new game
         void place(Piece piece, Pos pos);
         void remove(Pos p);

@@ -4,8 +4,8 @@
 
 class L1: public Computer {
     public: 
-        L1(Board *board);
-        PMove getMove() override; 
+        L1(LegalBoard *b);
+        Move getMove() override; 
         ~L1();
 };
 

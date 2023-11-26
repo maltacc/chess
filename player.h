@@ -8,8 +8,8 @@ class Player {
         LegalBoard *b; 
 
     public: 
-        Player();
-        virtual PMove getMove() = 0;
+        Player(LegalBoard *b);
+        virtual Move getMove() = 0;
         virtual ~Player(); 
 }; 
 

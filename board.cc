@@ -1,8 +1,18 @@
 #include "board.h"
+#include "consts.h"
 #include <string>
 using namespace std; 
 
 Board::Board(): state{State::None}, turn{Side::W} {}
+
+Board::Board(const Board &other): state{other.state}, turn{other.turn} {
+    // observers should be empty since we don't want to reflect changes
+    // copy Square array 
+    for (int r = 0; r < DIM; r++) 
+        for (int c = 0; c < DIM; c++) {
+            b[r][c] = Square{other.b[r][c]}; // copies the square and piece in it
+        }
+}
 
 void Board::clear() {}
 
@@ -31,7 +41,7 @@ void Board::notifyObservers() {
 }
 
 const Piece * Board::getPiece(int i, int j) {
-    return b[i][j].piece();
+    return b[i][j].getPiece();
 }
 
 State Board::getState() { return state; }

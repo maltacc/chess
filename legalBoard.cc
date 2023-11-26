@@ -4,13 +4,14 @@ using namespace std;
 const int PERPDIR[4][2] = {{1, 0}, {-1, 0}, {0, -1}, {0, 1}};
 const int DIAGDIR[4][2] = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
 
+LegalBoard::LegalBoard(const Board& other): Board{other} {}
 
 bool LegalBoard::sameType(int rankIndex, int fileIndex, Type t) {
-    return b[rankIndex][fileIndex].piece()->getType() == t;
+    return b[rankIndex][fileIndex].getPiece()->getType() == t;
 }
 
 bool LegalBoard::sameSide(int rankIndex, int fileIndex, Side s) {
-    return b[rankIndex][fileIndex].piece()->getSide() == s;
+    return b[rankIndex][fileIndex].getPiece()->getSide() == s;
 }
 
 bool LegalBoard::inBounds(int x, int y) {
@@ -120,20 +121,21 @@ bool LegalBoard::canKingBeHere(int rankIndex, int fileIndex){
         (b[rankIndex][fileIndex].isEmpty() || !sameSide(rankIndex, fileIndex, turn));
 }
 
-void LegalBoard::updateCurrentKingLocation() {
+void LegalBoard::updateKingInfo() {
+    generateAttackMap();
     for (int i = 0; i < DIM; i++) {
         for (int j = 0; j < DIM; j++) {
-            if (sameType(i, j, Type::K) && sameSide(i, j, turn)){
-                if (turn == Side::W) whiteKing = Pos(i, j);
-                else blackKing = Pos(i, j);
+            if (sameType(i, j, Type::K)){
+                if (sameSide(i, j, turn)) kingAttackers = b[i][j].attackCount();
+                if (sameSide(i, j, Side::W)) whiteKing = Pos{i, j};
+                else blackKing = Pos{i, j};
             }
         }
     }
 }
 
-int LegalBoard::kingAttackerCount(){
-    Pos kingPos = (turn == Side::W ? whiteKing : blackKing);
-    return b[kingPos.getRank()][kingPos.getFile()].attackCount();
+bool LegalBoard::underCheck(){
+    return kingAttackers;
 }
 
 void LegalBoard::updateKingMoves(Pos p) {
@@ -160,7 +162,7 @@ void LegalBoard::updateKingMoves(Pos p) {
 
 void LegalBoard::updateQueenMoves(Pos p, bool isPinned) {
     int r = p.getRank(), c = p.getFile(); 
-    switch (kingAttackerCount()) {
+    switch (kingAttackers) {
         case 0:
             break;
         case 1:
@@ -187,7 +189,7 @@ void LegalBoard::updateBishopMoves(Pos p, bool isPinned) {
 
 void LegalBoard::addKnightLeaps(int ri, int ci, int rf, int cf) {
     if (inBounds(rf, cf)) {
-        if (b[rf][cf].isEmpty() || b[rf][cf].piece()->getSide() != turn) 
+        if (b[rf][cf].isEmpty() || b[rf][cf].getPiece()->getSide() != turn) 
             legalMoves.push_back(Move{Pos{ri, ci}, Pos{rf, cf}});   
     }
 }
@@ -222,7 +224,7 @@ bool LegalBoard::insufficientMaterial() {
     bool majorPieceOrPawn = false; // if you find a rook or queen or pawn, the game can be won
     for (int r = 0; r < DIM; r++) {
         for (int c = 0; c < DIM; c++) {
-            Type p = b[r][c].piece()->getType(); 
+            Type p = b[r][c].getPiece()->getType(); 
             if (p == Type::R || p == Type::Q || p == Type::P) return 0; 
             else if (p == Type::N) {
                 knightCount++; 
@@ -266,9 +268,7 @@ void LegalBoard::promote(Type type) {
     }
 }
 
-auto LegalBoard::legalMovesBegin(){ return legalMoves.begin(); }
-
-auto LegalBoard::legalMovesEnd(){ return legalMoves.end(); }
+const vector<Move>& LegalBoard::getLegalMoves() { return legalMoves; }
 
 bool LegalBoard::isPinned(int rankIndex, int fileIndex){
     // NOTE TO SELF: DO THIS FUNCTION BEFORE THE updatePieceMoves FUNCTIONS!!!
@@ -297,16 +297,13 @@ bool LegalBoard::isPinned(int rankIndex, int fileIndex){
 }
 
 void LegalBoard::updateLegalMoves() {
-    legalMoves.clear(); 
-    generateAttackMap();
-    updateCurrentKingLocation();
-    kingAttackers = kingAttackerCount();
+    legalMoves.clear();
     
     for (int i = 0; i < DIM; i++) {
         for (int j = 0; j < DIM; j++) {
             if (!sameSide(i, j, turn)) continue;
             bool pin = isPinned(i, j);
-            switch (b[i][j].piece()->getType()){
+            switch (b[i][j].getPiece()->getType()){
                 case Type::P:
                     updatePawnMoves(Pos(i, j), pin);
                     break;
@@ -327,6 +324,18 @@ void LegalBoard::updateLegalMoves() {
             }
         }
     }
+}
+
+bool LegalBoard::move(Move m){
+    bool success = true;
+    
+    // ...
+    
+    if (success){
+        turn = (turn == Side::W ? Side::B : Side::W);
+        updateKingInfo();
+    } 
+    return success;
 }
 
 LegalBoard::~LegalBoard() {}

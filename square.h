@@ -8,9 +8,9 @@ class Square {
     int attacked = 0; // square is attacked
 
     public: 
-        const Piece * piece();
         Square();
-        Square(Piece *p); 
+        Square(const Square &other); // copy ctor
+        const Piece* getPiece() const;
         void move(Square &s); // move piece to s, handles captures too
         void setEmpty(); // remove piece from square
         bool isEmpty() const; // square doesn't contain a piece
