@@ -7,7 +7,7 @@ class Computer: public Player {
 
     public: 
         Computer(Board *board);
-        virtual ~Computer();
+        virtual ~Computer() = 0;
 }; 
 
 #endif 

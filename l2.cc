@@ -25,6 +25,8 @@ Move L2::getMove() {
         if (!b->getPiece(xf, yf) || 
             (tmpBoard.move(m) && tmpBoard.underCheck())) 
             favored.push_back(m); 
+
+        resetMove();
     }
 
     // randomly choose a move from favored moves
