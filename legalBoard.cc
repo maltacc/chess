@@ -119,8 +119,8 @@ bool LegalBoard::canKingBeHere(int rankIndex, int fileIndex){
 }
 
 void LegalBoard::updateCurrentKingLocation() {
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
+    for (int i = 0; i < DIM; i++) {
+        for (int j = 0; j < DIM; j++) {
             if (sameType(i, j, Type::K) && sameSide(i, j, turn)){
                 if (turn == Side::W) whiteKing = Pos(i, j);
                 else blackKing = Pos(i, j);
@@ -286,7 +286,7 @@ bool LegalBoard::isPinned(int rankIndex, int fileIndex){
     if (rankDiff == fileDiff || rankDiff == -1 * fileDiff){
         int rankDir = rankDiff / (rankDiff < 0 ? -1 * rankDiff : rankDiff);
         int fileDir = fileDiff / (fileDiff < 0 ? -1 * fileDiff : fileDiff);
-        for (int i = rankIndex, int j = fileIndex; i < DIR && i >= 0, j < DIR && j >= 0; i += rankDir, j += fileDir){
+        for (int i = rankIndex, int j = fileIndex; i < DIM && i >= 0, j < DIM && j >= 0; i += rankDir, j += fileDir){
 
         }
     }
