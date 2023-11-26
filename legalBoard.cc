@@ -265,6 +265,7 @@ void LegalBoard::promote(Type type) {
         }
     }
 }
+
 auto LegalBoard::legalMovesBegin(){ return legalMoves.begin(); }
 
 auto LegalBoard::legalMovesEnd(){ return legalMoves.end(); }
@@ -284,15 +285,15 @@ bool LegalBoard::isPinned(int rankIndex, int fileIndex){
     Pos kingPos = (turn == Side::W ? whiteKing : blackKing);
     int rankDiff = kingPos.getRank() - rankIndex;
     int fileDiff = kingPos.getFile() - rankIndex;
-    if (rankDiff == 0 && fileDiff == 0) return false;
-    if (rankDiff == fileDiff || rankDiff == -1 * fileDiff){
-        int rankDir = rankDiff / (rankDiff < 0 ? -1 * rankDiff : rankDiff);
-        int fileDir = fileDiff / (fileDiff < 0 ? -1 * fileDiff : fileDiff);
+    if (rankDiff == 0 && fileDiff == 0) return 0;
+    if (rankDiff == fileDiff || rankDiff == -fileDiff){
+        int rankDir = rankDiff / (rankDiff < 0 ? -rankDiff : rankDiff);
+        int fileDir = fileDiff / (fileDiff < 0 ? -fileDiff : fileDiff);
         for (int i = rankIndex, j = fileIndex; i < DIM && i >= 0, j < DIM && j >= 0; i += rankDir, j += fileDir){
 
         }
     }
-    return false;
+    return 0;
 }
 
 void LegalBoard::updateLegalMoves() {
