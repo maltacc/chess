@@ -30,7 +30,9 @@ bool LegalBoard::addValidMoves(int r, int c, int i, int j) {
 }
 
 void LegalBoard::traverseDir(int r, int c, int rowDir, int colDir) {
-    for (int i = r + rowDir, j = c + colDir; i >= 0 && i < DIM && j >= 0 && j < DIM; i += rowDir, j += colDir)
+    for (int i = r + rowDir, j = c + colDir; 
+         i >= 0 && i < DIM && j >= 0 && j < DIM;
+         i += rowDir, j += colDir)
         if (!addValidMoves(r, c, i, j)) break; 
 }
 
@@ -286,7 +288,7 @@ bool LegalBoard::isPinned(int rankIndex, int fileIndex){
     if (rankDiff == fileDiff || rankDiff == -1 * fileDiff){
         int rankDir = rankDiff / (rankDiff < 0 ? -1 * rankDiff : rankDiff);
         int fileDir = fileDiff / (fileDiff < 0 ? -1 * fileDiff : fileDiff);
-        for (int i = rankIndex, int j = fileIndex; i < DIM && i >= 0, j < DIM && j >= 0; i += rankDir, j += fileDir){
+        for (int i = rankIndex, j = fileIndex; i < DIM && i >= 0, j < DIM && j >= 0; i += rankDir, j += fileDir){
 
         }
     }
