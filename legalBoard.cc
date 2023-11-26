@@ -1,99 +1,55 @@
 #include "legalBoard.h"
 using namespace std;
 
-bool LegalBoard::sameType(int rank_index, int file_index, Type t) {
-    return b[rank_index][file_index].piece()->getType() == t;
+const int PERPDIR[4][2] = {{1, 0}, {-1, 0}, {0, -1}, {0, 1}};
+const int DIAGDIR[4][2] = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
+
+
+bool LegalBoard::sameType(int rankIndex, int fileIndex, Type t) {
+    return b[rankIndex][fileIndex].piece()->getType() == t;
 }
 
-bool LegalBoard::sameSide(int rank_index, int file_index, Side s) {
-    return b[rank_index][file_index].piece()->getSide() == s;
+bool LegalBoard::sameSide(int rankIndex, int fileIndex, Side s) {
+    return b[rankIndex][fileIndex].piece()->getSide() == s;
 }
 
 bool LegalBoard::inBounds(int x, int y) {
-    return (x >= 0) && (x < 8) && (y >= 0) && (y < 8); 
+    return (x >= 0) && (x < DIM) && (y >= 0) && (y < DIM); 
+}
+
+bool LegalBoard::addValidMoves(int r, int c, int i, int j) {
+    if (b[i][j].isEmpty()) {
+        legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}});
+    } else {
+        if (!sameSide(i, j, turn)) {
+            legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}});  // enemy piece, can capture
+        }
+        else return 0;  // can only capture or move until the first enemy piece it encounters
+    }
+    return 1;
+}
+
+void LegalBoard::traverseDir(int r, int c, int rowDir, int colDir) {
+    for (int i = r + rowDir, j = c + colDir; i >= 0 && i < DIM && j >= 0 && j < DIM; i += rowDir, j += colDir)
+        if (!addValidMoves(r, c, i, j)) break; 
 }
 
 void LegalBoard::addDiagonals(int r, int c) {
-        // move towards upper right corner of board
-        for (int i = r, j = c; i >= 0 && j <= 7; i--, j++) { 
-            if (b[i][j].isEmpty()) legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}}); 
-            else {
-                if (!sameSide(i, j, turn))
-                    legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}});  // enemy piece, can capture
-                break;  // can only capture or move until the first enemy piece it encounters
-            }
-        }
-
-        // move towards upper left corner of board
-        for (int i = r, j = c; i >= 0 && j >= 0; i--, j--) { 
-            if (b[i][j].isEmpty()) legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}}); 
-            else {
-                if (!sameSide(i, j, turn))
-                    legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}});  // enemy piece, can capture
-                break;  // can only capture or move until the first enemy piece it encounters
-            }
-        }
-
-        // move towards lower right corner of board
-        for (int i = r, j = c; i <= 7 && j <= 7; i++, j++) { 
-            if (b[i][j].isEmpty()) legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}}); 
-            else {
-                if (!sameSide(i, j, turn))
-                    legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}});  // enemy piece, can capture
-                break;  // can only capture or move until the first enemy piece it encounters
-            }
-        }
-
-        // move towards lower left corner of board
-        for (int i = r, j = c; i <= 7 && j >= 0; i++, j--) { 
-            if (b[i][j].isEmpty()) legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}}); 
-            else {
-                if (!sameSide(i, j, turn))
-                    legalMoves.push_back(Move{Pos{r, c}, Pos{i, j}});  // enemy piece, can capture
-                break;  // can only capture or move until the first piece it encounters
-            }
-        }
+    const int DIR[4][2] = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
+    for (int i = 0; i < 4; i++) traverseDir(r, c, DIAGDIR[i][0], DIAGDIR[i][1]); 
 }
 
 void LegalBoard::addPerpendiculars(int r, int c) {
-    // check vertical path above piece
-    for (int i = r - 1; i >= 0; i--) {
-        if (b[i][c].isEmpty()) legalMoves.push_back(Move{Pos{r, c}, Pos{i, c}}); 
-        else {
-            if (!sameSide(i, c, turn)) 
-                legalMoves.push_back(Move{Pos{r, c}, Pos{i, c}});  // enemy piece, can capture
-            break;  // can only capture or move until the first piece it encounters
-        }
-    }
+    const int DIR[4][2] = {{1, 0}, {-1, 0}, {0, -1}, {0, 1}};
+    for (int i = 0; i < 4; i++) traverseDir(r, c, PERPDIR[i][0], PERPDIR[i][1]); 
+}
 
-    // check vertical path below piece 
-    for (int i = r + 1; i < 8; i++) {
-        if (b[i][c].isEmpty()) legalMoves.push_back(Move{Pos{r, c}, Pos{i, c}}); 
-        else {
-            if (!sameSide(i, c, turn)) 
-                legalMoves.push_back(Move{Pos{r, c}, Pos{i, c}});  // enemy piece, can capture
-            break;  // can only capture or move until the first enemy piece it encounters
-        }
-    }
-
-    // check horizontal path to the left of piece
-    for (int i = c; i >= 0; i--) {
-        if (b[r][i].isEmpty()) legalMoves.push_back(Move{Pos{r, c}, Pos{r, i}}); 
-        else {
-            if (!sameSide(r, i, turn)) 
-                legalMoves.push_back(Move{Pos{r, c}, Pos{r, i}});  // enemy piece, can capture
-            break;  // can only capture or move until the first enemy piece it encounters
-        }
-    }
-
-    // check horizontal path to the right of piece
-    for (int i = c; i < 8; i++) {
-        if (b[r][i].isEmpty()) legalMoves.push_back(Move{Pos{r, c}, Pos{r, i}}); 
-        else {
-            if (!sameSide(r, i, turn)) 
-                legalMoves.push_back(Move{Pos{r, c}, Pos{r, i}});  // enemy piece, can capture
-            break;  // can only capture or move until the first enemy piece it encounters
-        }
+void LegalBoard::attackDir(int r, int c, int rowDir, int colDir) {
+    for (int i = r + rowDir, j = c + colDir; 
+         i >= 0 && i <= 7 && j >= 0 && j <= 7; 
+         i += rowDir, j += colDir) {
+        b[i][j].addAttacked();
+        if (!b[r][c].isEmpty() && !(*getPiece(r, c) == Piece(Type::K, turn))) break;
     }
 }
 
@@ -101,32 +57,28 @@ void LegalBoard::generateAttackMap() {
     Side attackingSide = (turn == Side::W ? Side::B : Side::W); 
 
     // reset attack map
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) b[i][j].setAttacked(0); 
+    for (int i = 0; i < DIM; i++) {
+        for (int j = 0; j < DIM; j++) b[i][j].setAttacked(0); 
     }
 
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-
+    for (int i = 0; i < DIM; i++) {
+        for (int j = 0; j < DIM; j++) {
             if (b[i][j].isEmpty() || getPiece(i, j)->getSide() == turn) continue;
 
             Type p = getPiece(i, j)->getType();  
 
-            // square contains a knight, pawn, or king (leaping pieces) 
-            // Knight:
-            if (p == Type::N) {
-                if (inBounds(i+2, j+1)) b[i+2][j+1].addAttacked(); 
-                if (inBounds(i-2, j+1)) b[i-2][j+1].addAttacked(); 
-                if (inBounds(i+2, j-1)) b[i+2][j-1].addAttacked(); 
-                if (inBounds(i-2, j-1)) b[i-2][j-1].addAttacked(); 
-                if (inBounds(i+1, j+2)) b[i+1][j+2].addAttacked(); 
-                if (inBounds(i-1, j+2)) b[i-1][j+2].addAttacked(); 
-                if (inBounds(i+1, j-2)) b[i+1][j-2].addAttacked(); 
-                if (inBounds(i-1, j-2)) b[i-1][j-2].addAttacked(); 
+            if (p == Type::N) { // Knight
+                const int NMOVES[DIM][2] = {
+                    {1, 2}, {-1, 2}, {-1, -2}, {1, -2},
+                    {2, 1}, {-2, 1}, {2, -1}, {-2, -1}
+                }; 
+                for (int k = 0; k < DIM; k++) {
+                    int r = NMOVES[k][0] + i, c = NMOVES[k][1] + j; 
+                    if (inBounds(r, c)) b[r][c].addAttacked(); 
+                }
             }
             
-            // Pawn:
-            if (p == Type::P) {
+            if (p == Type::P) { // Pawn
                 if (getPiece(i, j)->getSide() == Side::B) {
                     if (inBounds(i+1, j-1)) b[i+1][j-1].addAttacked();
                     if (inBounds(i+1, j+1)) b[i+1][j+1].addAttacked(); 
@@ -137,66 +89,33 @@ void LegalBoard::generateAttackMap() {
                 }
             }
 
-            // King:
-            if (p == Type::K) {
-                if (inBounds(i+1, j+1)) b[i+1][j+1].addAttacked();
-                if (inBounds(i+1, j)) b[i+1][j].addAttacked();
-                if (inBounds(i+1, j-1)) b[i+1][j-1].addAttacked(); 
-                if (inBounds(i, j+1)) b[i][j+1].addAttacked();
-                if (inBounds(i, j-1)) b[i][j-1].addAttacked(); 
-                if (inBounds(i-1, j+1)) b[i-1][j+1].addAttacked(); 
-                if (inBounds(i-1, j)) b[i-1][j].addAttacked();
-                if (inBounds(i-1, j-1)) b[i-1][j-1].addAttacked(); 
+            if (p == Type::K) { // King
+                const int KMOVES[DIM][2] = {
+                    {1, 1}, {0, 1}, {1, 0}, {1, -1}, 
+                    {-1, 1}, {-1, -1}, {0, -1}, {-1, 0}
+                };
+                for (int k = 0; k < DIM; k++) {
+                    int r = KMOVES[k][0] + i, c = KMOVES[k][1] + j; 
+                    if (inBounds(r, c)) b[r][c].addAttacked(); 
+                }
             }
 
             // Diagonal Moves (Bishop or Queen):
             if (p == Type::B || p == Type::Q) {
-                for (int r = i - 1, c = j + 1; r >= 0 && c <= 7; r--, c++) {
-                    b[r][c].addAttacked();
-                    // We do not care about which Side the piece is on because we need to account
-                    // for pieces that are defended by ally pieces.
-                    if (!b[r][c].isEmpty() && !(*getPiece(r, c) == Piece(Type::K, turn))) break;
-                }
-                for (int r = i + 1, c = j + 1; r <= 7 && c <= 7; r++, c++) {
-                    b[r][c].addAttacked(); 
-                    if (!b[r][c].isEmpty() && !(*getPiece(r, c) == Piece(Type::K, turn))) break;
-                }
-                for (int r = i - 1, c = j - 1; r >= 0 && c >= 0; r--, c--) {
-                    b[r][c].addAttacked(); 
-                    if (!b[r][c].isEmpty() && !(*getPiece(r, c) == Piece(Type::K, turn))) break;
-                }
-                for (int r = i + 1, c = j - 1; r <= 7 && c >= 0; r++, c--) {
-                    b[r][c].addAttacked(); 
-                    if (!b[r][c].isEmpty() && !(*getPiece(r, c) == Piece(Type::K, turn))) break;
-                }
+                for (int i = 0; i < 4; i++) attackDir(i, j, DIAGDIR[i][0], DIAGDIR[i][1]); 
             }
 
             // Manhattan Moves (Rook or Queen):
             if (p == Type::R || p == Type::Q) {
-                for (int r = i + 1; r < 8; r++){
-                    b[r][j].addAttacked();
-                    if (!b[r][j].isEmpty() && !(*getPiece(r, j) == Piece(Type::K, turn))) break;
-                }
-                for (int r = i - 1; r >= 0; r--){
-                    b[r][j].addAttacked(); 
-                    if (!b[r][j].isEmpty() && !(*getPiece(r, j) == Piece(Type::K, turn))) break;
-                }
-                for (int c = j + 1; c < 8; c++){
-                    b[i][c].addAttacked(); 
-                    if (!b[i][c].isEmpty() && !(*getPiece(i, c) == Piece(Type::K, turn))) break;
-                }
-                for (int c = j - 1; c >= 0; c--){
-                    b[i][c].addAttacked(); 
-                    if (!b[i][c].isEmpty() && !(*getPiece(i, c) == Piece(Type::K, turn))) break;
-                }
+                for (int i = 0; i < 4; i++) attackDir(i, j, PERPDIR[i][0], PERPDIR[i][1]); 
             }
         }
     }
 }
 
-bool LegalBoard::canKingBeHere(int rank_index, int file_index){
-    return inBounds(rank_index, file_index) && !b[rank_index][file_index].isAttacked() && 
-        (b[rank_index][file_index].isEmpty() || !sameSide(rank_index, file_index, turn));
+bool LegalBoard::canKingBeHere(int rankIndex, int fileIndex){
+    return inBounds(rankIndex, fileIndex) && !b[rankIndex][fileIndex].isAttacked() && 
+        (b[rankIndex][fileIndex].isEmpty() || !sameSide(rankIndex, fileIndex, turn));
 }
 
 int LegalBoard::kingAttackerCount(){
@@ -219,7 +138,7 @@ void LegalBoard::updateKingMoves(Pos p) {
     if (canKingBeHere(r, c + 1)) legalMoves.push_back(Move{p, Pos{r, c + 1}}); 
 
     // 3 squares below King 
-    if (r + 1 >= 0 && r + 1 < 8) {
+    if (r + 1 >= 0 && r + 1 < DIM) {
         for (int i = c - 1; i <= c + 1; i++) {
             if (canKingBeHere(r + 1, i)) legalMoves.push_back(Move{p, Pos{r + 1, i}}); 
         }
@@ -229,12 +148,12 @@ void LegalBoard::updateKingMoves(Pos p) {
 void LegalBoard::updateQueenMoves(Pos p, bool isPinned) {
     int r = p.getRank(), c = p.getFile(); 
     switch (kingAttackerCount()) {
-    case 0:
-        break;
-    case 1:
-        break;
-    default:
-        break;
+        case 0:
+            break;
+        case 1:
+            break;
+        default:
+            break;
     }
     // Is this piece pinned?
         // if so...
@@ -263,14 +182,11 @@ void LegalBoard::addKnightLeaps(int ri, int ci, int rf, int cf) {
 void LegalBoard::updateKnightMoves(Pos p, bool isPinned) {
     if (isPinned) return; // There are no possible moves for the knight if its pinned
     int r = p.getRank(), c = p.getFile();
-    addKnightLeaps(r, c, r - 1, c + 2); 
-    addKnightLeaps(r, c, r + 1, c + 2); 
-    addKnightLeaps(r, c, r - 1, c - 2); 
-    addKnightLeaps(r, c, r + 1, c - 2); 
-    addKnightLeaps(r, c, r + 2, c + 1); 
-    addKnightLeaps(r, c, r + 2, c - 1); 
-    addKnightLeaps(r, c, r - 2, c + 1); 
-    addKnightLeaps(r, c, r - 2, c - 1); 
+    const int MOVES[DIM][2] = {
+        {-1, 2}, {1, 2}, {-1, -2}, {1, -2}, 
+        {2, 1}, {2, -1}, {-2, 1}, {-2, -1}
+    };
+    for (int i = 0; i < DIM; i++) addKnightLeaps(r, c, MOVES[i][0], MOVES[i][1]); 
 }
 
 void LegalBoard::updatePawnMoves(Pos p, bool isPinned) {
@@ -291,8 +207,8 @@ bool LegalBoard::insufficientMaterial() {
     bool whiteSquareBishopCount = 0;
     bool blackSquareBishopCount = 0;
     bool majorPieceOrPawn = false; // if you find a rook or queen or pawn, the game can be won
-    for (int r = 0; r < 8; r++) {
-        for (int c = 0; c < 8; c++) {
+    for (int r = 0; r < DIM; r++) {
+        for (int c = 0; c < DIM; c++) {
             Type p = b[r][c].piece()->getType(); 
             if (p == Type::R || p == Type::Q || p == Type::P) return 0; 
             else if (p == Type::N) {
@@ -309,7 +225,8 @@ bool LegalBoard::insufficientMaterial() {
     return 0; 
 }
 
-void LegalBoard::updateState() {}
+void LegalBoard::updateState() { /* ALAN DO THIS!!!!!! */ }
+
 Side LegalBoard::getTurn() { return turn; }
 
 bool LegalBoard::move(Move m) {
@@ -328,17 +245,18 @@ bool LegalBoard::move(Move m) {
 }
 
 void LegalBoard::promote(Type type) {
-    int rank_index = (turn == Side::W ? 0 : 7);
-    for (int j = 0; j < 8; j++) {
-        if (sameType(rank_index, j, Type::P)) {
-            b[rank_index][j].addPiece(Piece(type, turn)); 
+    int rankIndex = (turn == Side::W ? 0 : 7);
+    for (int j = 0; j < DIM; j++) {
+        if (sameType(rankIndex, j, Type::P)) {
+            b[rankIndex][j].addPiece(Piece(type, turn)); 
         }
     }
 }
 auto LegalBoard::legalMovesBegin(){ return legalMoves.begin(); }
+
 auto LegalBoard::legalMovesEnd(){ return legalMoves.end(); }
 
-bool LegalBoard::isPinned(int rank_index, int file_index){
+bool LegalBoard::isPinned(int rankIndex, int fileIndex){
     // NOTE TO SELF: DO THIS FUNCTION BEFORE THE updatePieceMoves FUNCTIONS!!!
     // - If this piece is the current turn's king, return false
     // - If this piece is not along the same diagonal / rank as the current turn's
@@ -356,8 +274,8 @@ void LegalBoard::updateLegalMoves() {
     legalMoves.clear(); 
     generateAttackMap();
     
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
+    for (int i = 0; i < DIM; i++) {
+        for (int j = 0; j < DIM; j++) {
             if (!sameSide(i, j, turn)) continue;
             bool pin = isPinned(i, j);
             switch (b[i][j].piece()->getType()){

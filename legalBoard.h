@@ -1,6 +1,7 @@
 #ifndef __LEGALBOARD_H__
 #define __LEGALBOARD_H__
 #include "board.h"
+#include "consts.h"
 #include <vector>
 using namespace std;
 
@@ -51,29 +52,32 @@ class LegalBoard: public Board {
     void updateState();
 
     // Helper methods: 
+    bool addValidMoves(int r, int c, int i, int j); // return 1 if move added, otherwise 0
+    void traverseDir(int r, int c, int rowDir, int colDir);
+
     void addDiagonals(int r, int c); 
-
     void addPerpendiculars(int r, int c); 
-
     void addKnightLeaps(int ri, int ci, int rf, int cf); 
+
+    void attackDir(int r, int c, int rowDir, int colDir); 
 
     // Checks if the current turn's King can be at a specific index.
     // Fn needs to be run after generateAttackMap().
-    bool canKingBeHere(int rank_index, int file_index);
+    bool canKingBeHere(int rankIndex, int fileIndex);
 
     int kingAttackerCount();
 
     // Saves the location of the current King in either whiteKing or blackKing.
     void updateCurrentKingLocation();
 
-    bool sameType(int rank_index, int file_index, Type t);
+    bool sameType(int rankIndex, int fileIndex, Type t);
 
-    bool sameSide(int rank_index, int file_index, Side s);
+    bool sameSide(int rankIndex, int fileIndex, Side s);
 
-    // Determines if the square at rank_index, file_index is pinned to the current
+    // Determines if the square at rankIndex, fileIndex is pinned to the current
     // turn's king.
     // condition: must be run after the location of the king has been determined.
-    bool isPinned(int rank_index, int file_index);
+    bool isPinned(int rankIndex, int fileIndex);
     
     public:
         Side getTurn();

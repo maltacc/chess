@@ -1,0 +1,1 @@
+extern const int DIM = 8;
