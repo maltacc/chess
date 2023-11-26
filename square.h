@@ -18,6 +18,7 @@ class Square {
         void setAttacked(int i);
         void addAttacked(); 
         bool isAttacked() const; // square is under attack
+        int attackCount();
         ~Square(); 
 }; 
 

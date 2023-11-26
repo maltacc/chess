@@ -12,7 +12,6 @@ class LegalBoard: public Board {
         bool whiteQueen = true; // White queen-side castle
     };
 
-    Side turn;
     bool whiteCheck, blackCheck;
     int kingAttackers = 0;
     vector<Move> legalMoves; // stores legal moves for 1 turn at a time
@@ -29,11 +28,11 @@ class LegalBoard: public Board {
     // Calculates legal moves for specific piece types at specific positions.
     // Adds legal moves to legalMoves as well as to squares at Pos p.
     void updateKingMoves(Pos p);
-    void updateQueenMoves(Pos p);
-    void updateRookMoves(Pos p);
-    void updateBishopMoves(Pos p);
-    void updateKnightMoves(Pos p);
-    void updatePawnMoves(Pos p);
+    void updateQueenMoves(Pos p, bool isPinned);
+    void updateRookMoves(Pos p, bool isPinned);
+    void updateBishopMoves(Pos p, bool isPinned);
+    void updateKnightMoves(Pos p, bool isPinned);
+    void updatePawnMoves(Pos p, bool isPinned);
 
     bool inBounds(int x, int y); 
 
@@ -58,19 +57,35 @@ class LegalBoard: public Board {
 
     void addKnightLeaps(int ri, int ci, int rf, int cf); 
 
+    // Checks if the current turn's King can be at a specific index.
+    // Fn needs to be run after generateAttackMap().
     bool canKingBeHere(int rank_index, int file_index);
+
+    int kingAttackerCount();
+
+    // Saves the location of the current King in either whiteKing or blackKing.
+    void updateCurrentKingLocation();
 
     bool sameType(int rank_index, int file_index, Type t);
 
     bool sameSide(int rank_index, int file_index, Side s);
+
+    // Determines if the square at rank_index, file_index is pinned to the current
+    // turn's king.
+    // condition: must be run after the location of the king has been determined.
+    bool isPinned(int rank_index, int file_index);
     
     public:
         Side getTurn();
         bool move(Move m) override;
         void promote(Type piece); // Does nothing if there is no pawn to promote
+        
+        // Determines if the position that the user set up is valid or not.
+        // e.g. Is there one king per team?
+        bool isValidPosition();
 
-        auto begin(); 
-        auto end();
+        auto legalMovesBegin(); 
+        auto legalMovesEnd();
 
 };
 

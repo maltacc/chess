@@ -1,4 +1,5 @@
 #include "board.h"
+#include <string>
 using namespace std; 
 
 Board::Board(): state{State::None}, turn{Side::W} {}

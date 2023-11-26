@@ -31,6 +31,10 @@ void Square::addAttacked() { attacked++; }
 
 bool Square::isAttacked() const { return attacked; }
 
+int Square::attackCount() {
+    return attacked;
+}
+
 const Piece * Square::piece() { return p; };
 
 Square::~Square() { delete p; }

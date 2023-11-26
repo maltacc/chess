@@ -8,7 +8,7 @@ class Piece {
     Type type; 
     Side side; 
 
-    public: 
+    public:
         bool operator==(const Piece &other) const;
         Piece(Type t, Side s); 
         Piece(char piece, Side s); 
