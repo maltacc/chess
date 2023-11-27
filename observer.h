@@ -4,7 +4,7 @@
 
 class Observer {
     public: 
-        virtual void notify(Board &b) = 0; 
+        virtual void notify(vector<Pos> v, Board &b) = 0; 
         virtual ~Observer() = default;
 }; 
 

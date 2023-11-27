@@ -1,20 +1,46 @@
 #include "textdisplay.h"
+#include "consts.h"
 using namespace std; 
 
 TextDisplay::TextDisplay() {} 
 
-void TextDisplay::notify(Board &b) {
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            td[i][j] = b.getPiece(i, j); 
-        }
+char TextDisplay::convertToChar(Piece p) {
+    Type t = p.getType(); 
+    Side s = p.getSide(); 
+
+    switch (t) {
+        case Type::K: 
+            if (s == Side::B) return 'k'; 
+            return 'K'; 
+        case Type::Q: 
+            if (s == Side::B) return 'q'; 
+            return 'Q'; 
+        case Type::B: 
+            if (s == Side::B) return 'b'; 
+            return 'B'; 
+        case Type::R: 
+            if (s == Side::B) return 'r'; 
+            return 'R'; 
+        case Type::P: 
+            if (s == Side::B) return 'p'; 
+            return 'P'; 
+        default: 
+            if (s == Side::B) return 'n'; 
+            return 'N'; 
+    }
+}
+
+void TextDisplay::notify(vector<Pos> v, Board &b) {
+    for (Pos p: v) {
+        int r = p.getRank(), c = p.getFile(); 
+        td[r][c] = convertToChar(*b.getPiece(r, c)); 
     }
 }
 
 ostream &operator<<(ostream &out, const TextDisplay &td) {
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < DIM; i++) {
         out << 8 - i << " "; // print ranks
-        for (int j = 0; j < 8; j++) {
+        for (int j = 0; j < DIM; j++) {
             out << td.td[i][j]; 
         }
         out << endl;
