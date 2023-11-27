@@ -44,6 +44,8 @@ class LegalBoard: public Board {
     // Updates if the game is in checkmate, stalemate, draw, still active, or none.
     void updateState();
 
+    
+
     // Helper methods: 
     bool addValidMoves(int r, int c, int i, int j); // return 1 if move added, otherwise 0
     void traverseDir(int r, int c, int rowDir, int colDir);

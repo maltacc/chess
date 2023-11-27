@@ -119,7 +119,7 @@ void LegalBoard::generateAttackMap() {
     }
 }
 
-bool LegalBoard::canKingBeHere(int rankIndex, int fileIndex){
+bool LegalBoard::canKingBeHere(int rankIndex, int fileIndex) {
     return inBounds(rankIndex, fileIndex) && !b[rankIndex][fileIndex].isAttacked() && 
         (b[rankIndex][fileIndex].isEmpty() || !sameSide(rankIndex, fileIndex, turn));
 }
@@ -128,7 +128,7 @@ void LegalBoard::updateKingInfo() {
     generateAttackMap();
     for (int i = 0; i < DIM; i++) {
         for (int j = 0; j < DIM; j++) {
-            if (sameType(i, j, Type::K)){
+            if (sameType(i, j, Type::K)) {
                 if (sameSide(i, j, turn)) kingAttackers = b[i][j].attackCount();
                 if (sameSide(i, j, Side::W)) whiteKing = Pos{i, j};
                 else blackKing = Pos{i, j};
@@ -137,30 +137,30 @@ void LegalBoard::updateKingInfo() {
     }
 }
 
-vector<Pos> LegalBoard::kingAttackerLocations(){
+vector<Pos> LegalBoard::kingAttackerLocations() {
     vector<Pos> kingAttackerList;
     Pos kingPos = (turn == Side::W ? whiteKing : blackKing);
-    for (auto inc: DIAGDIR){
+    for (auto inc: DIAGDIR) {
         for (int i = kingPos.getRank() + inc[0], j = kingPos.getFile() + inc[1];
-             inBounds(i, j); i += inc[0], j += inc[1]){
-            if (!b[i][j].isEmpty()){
-                if (!sameSide(i, j, turn) && (sameType(i, j, Type::B) || sameType(i, j, Type::Q))){
+             inBounds(i, j); i += inc[0], j += inc[1]) {
+            if (!b[i][j].isEmpty()) {
+                if (!sameSide(i, j, turn) && (sameType(i, j, Type::B) || sameType(i, j, Type::Q))) {
                     kingAttackerList.push_back(Pos{i, j});
                 }
             }
         }
     }
-    for (auto inc: PERPDIR){
+    for (auto inc: PERPDIR) {
         for (int i = kingPos.getRank() + inc[0], j = kingPos.getFile() + inc[1];
-             inBounds(i, j); i += inc[0], j += inc[1]){
-            if (!b[i][j].isEmpty()){
-                if (!sameSide(i, j, turn) && (sameType(i, j, Type::R) || sameType(i, j, Type::Q))){
+             inBounds(i, j); i += inc[0], j += inc[1]) {
+            if (!b[i][j].isEmpty()) {
+                if (!sameSide(i, j, turn) && (sameType(i, j, Type::R) || sameType(i, j, Type::Q))) {
                     kingAttackerList.push_back(Pos{i, j});
                 }
             }
         }
     }
-    for (auto inc: NMOVES){
+    for (auto inc: NMOVES) {
         int r = kingPos.getRank() + inc[0], c = kingPos.getFile() + inc[1];
         if (sameType(r, c, Type::N) && !sameSide(r, c, turn))
             kingAttackerList.push_back(Pos{r, c});
@@ -176,7 +176,7 @@ vector<Pos> LegalBoard::kingAttackerLocations(){
     return kingAttackerList;
 }
 
-bool LegalBoard::underCheck(){ return kingAttackers; }
+bool LegalBoard::underCheck() { return kingAttackers; }
 
 void LegalBoard::updateKingMoves(Pos p) {
     int r = p.getRank(), c = p.getFile(); 
@@ -198,11 +198,13 @@ void LegalBoard::updateKingMoves(Pos p) {
             if (canKingBeHere(r + 1, i)) legalMoves.push_back(Move{p, Pos{r + 1, i}}); 
         }
     }
+
+    // check for castling!!!
 }
 
 void LegalBoard::updateQueenMoves(Pos p, bool isPinned) {
     int r = p.getRank(), c = p.getFile(); 
-    if (kingAttackers = 1){
+    if (kingAttackers = 1) {
         if (isPinned) return;
         
     }
@@ -274,8 +276,8 @@ bool LegalBoard::insufficientMaterial() {
 
 void LegalBoard::updateState() {
     // Checking stalemate / checkmate
-    if (legalMoves.size() == 0){
-        if (kingAttackers){
+    if (legalMoves.size() == 0) {
+        if (kingAttackers) {
             state = State::Checkmate;
         } else {
             state = State::Stalemate;
@@ -283,6 +285,36 @@ void LegalBoard::updateState() {
         return;
     }
     if (insufficientMaterial()) state = State::Draw;
+}
+
+bool LegalBoard::isValidPosition() {
+    Side temp = turn;
+    turn = Side::W;
+    updateKingInfo();
+    if (underCheck()) return 0;
+    turn = Side::B;
+    updateKingInfo();
+    if (underCheck()) return 0;
+    turn = temp;
+    int whiteKingCount = 0, blackKingCount = 0;
+    for (int file = 0; file < DIM; file++) {
+        if (sameType(0, file, Type::P) || sameType(DIM, file, Type::P)) return 0;
+        for (int rank = 0; rank < DIM; rank++) {
+            if (sameType(rank, file, Type::K)) {
+                if ((sameSide(rank, file, Side::W) ? ++whiteKingCount : ++blackKingCount) > 1) return 0;
+            }
+        }
+    }
+    if (whiteKingCount != 1 || blackKingCount != 1) return 0;
+    return 1;
+}
+
+void LegalBoard::activateGame() {
+    if (!isValidPosition()) return;
+    updateKingInfo();
+    updateLegalMoves();
+    updateState();
+    if (state == State::None) state = State::InPlay;
 }
 
 Side LegalBoard::getTurn() { return turn; }
@@ -298,20 +330,20 @@ void LegalBoard::promote(Type type) {
 
 const vector<Move>& LegalBoard::getLegalMoves() { return legalMoves; }
 
-bool LegalBoard::isPinned(int rankIndex, int fileIndex){
+bool LegalBoard::isPinned(int rankIndex, int fileIndex) {
     Pos kingPos = (turn == Side::W ? whiteKing : blackKing);
     int rankDiff = kingPos.getRank() - rankIndex, fileDiff = kingPos.getFile() - rankIndex;
     if (rankDiff == 0 && fileDiff == 0) return 0;
     int rankDir = 0, fileDir = 0;
     if (rankDiff != 0) rankDir = rankDiff / abs(rankDiff); 
     if (fileDiff != 0) fileDir = fileDiff / abs(fileDiff); 
-    if (rankDiff == fileDiff || rankDiff == -fileDiff || rankDiff == 0 || fileDiff == 0){
+    if (rankDiff == fileDiff || rankDiff == -fileDiff || rankDiff == 0 || fileDiff == 0) {
         for (int i = rankIndex + rankDir, j = fileIndex + fileDir; 
              i != rankIndex + rankDiff, j != fileIndex + fileDiff;
              i += rankDir, j += fileDir)
             if (!b[i][j].isEmpty()) return 0;
-        for (int i = rankIndex - rankDir, j = fileIndex - fileDir; inBounds(i, j); i -= rankDir, j -= fileDir){
-            if (!b[i][j].isEmpty()){
+        for (int i = rankIndex - rankDir, j = fileIndex - fileDir; inBounds(i, j); i -= rankDir, j -= fileDir) {
+            if (!b[i][j].isEmpty()) {
                 if (rankDir == 0 || fileDir == 0) {
                     if ((sameType(i, j, Type::R) || sameType(i, j, Type::Q)) && !sameSide(i, j, turn)) return 1;
                 } else
@@ -325,12 +357,18 @@ bool LegalBoard::isPinned(int rankIndex, int fileIndex){
 
 void LegalBoard::updateLegalMoves() {
     legalMoves.clear();
-    
+    vector<Pos> attackers = kingAttackerLocations();
+    if (kingAttackers > 1){ // If there is more than one piece attacking the king,
+                            // we must move the king.
+        Pos kingPos = (turn == Side::W ? whiteKing : blackKing);
+        updateKingMoves(kingPos);
+        return;
+    }
     for (int i = 0; i < DIM; i++) {
         for (int j = 0; j < DIM; j++) {
             if (!sameSide(i, j, turn)) continue;
             bool pin = isPinned(i, j);
-            switch (b[i][j].getPiece()->getType()){
+            switch (b[i][j].getPiece()->getType()) {
                 case Type::P:
                     updatePawnMoves(Pos(i, j), pin);
                     break;
@@ -353,7 +391,7 @@ void LegalBoard::updateLegalMoves() {
     }
 }
 
-bool LegalBoard::move(Move m){
+bool LegalBoard::move(Move m) {
     if (state != State::InPlay) return 0;
     bool success = 0;
     
@@ -363,7 +401,7 @@ bool LegalBoard::move(Move m){
     }
 
     for (auto move: legalMoves) {
-        if (!(move.getStart() != m.getStart()) && !(move.getEnd() != m.getEnd())){
+        if (!(move.getStart() != m.getStart()) && !(move.getEnd() != m.getEnd())) {
             success = 1;
             break;
         }
@@ -375,16 +413,24 @@ bool LegalBoard::move(Move m){
 
     // handling en passant:
     if (sameType(initRow, initCol, Type::P)) {
-        if (initCol != finCol && b[finRow][finCol].isEmpty()){
+        if (initCol != finCol && b[finRow][finCol].isEmpty()) {
             remove(Pos{initRow, finCol});
         }
     // handling promotion moves
-        if (finRow == DIM - 1 && turn == Side::B || finRow == 0 && turn == Side::W){
+        if (finRow == DIM - 1 && turn == Side::B || finRow == 0 && turn == Side::W) {
             promote(m.getPromo());
         }
     }
     // handling castling:
-    // else if () {}
+    else if (sameType(initRow, initCol, Type::K)) {
+        if (turn == Side::W) {
+            castle.whiteKing = false;
+            castle.whiteQueen = false;
+        } else {
+            castle.blackKing = false;
+            castle.whiteKing = false;
+        }
+    }
 
     turn = (turn == Side::W ? Side::B : Side::W);
     updateKingInfo();
