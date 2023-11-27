@@ -14,7 +14,6 @@ class LegalBoard: public Board {
 
     Pos whiteKing = Pos{4, 7}, blackKing = Pos{4, 0};
     int kingAttackers = 0;
-    vector<Pos> kingAttackerList;
     vector<Move> legalMoves; // stores legal moves for 1 turn at a time
     canCastle castle{};
 
@@ -23,10 +22,6 @@ class LegalBoard: public Board {
     // Updates the legal moves for pieces matching Side turn.
     // Uses the following 6 fns to update the legal moves for all the pieces.
     void updateLegalMoves();
-
-    // Generates the attack map of the current opponent's pieces for the purposes
-    // of generating legal King moves.
-    void generateAttackMap();
 
     // Calculates legal moves for specific piece types at specific positions.
     // Adds legal moves to legalMoves as well as to squares at Pos p.
@@ -58,6 +53,10 @@ class LegalBoard: public Board {
 
     void attackDir(int r, int c, int rowDir, int colDir); 
 
+    // Generates the attack map of the current opponent's pieces for the purposes
+    // of generating legal King moves.
+    void generateAttackMap();
+
     // Checks if the current turn's King can be at a specific index.
     // Fn needs to be run after generateAttackMap().
     bool canKingBeHere(int rankIndex, int fileIndex);
@@ -66,6 +65,8 @@ class LegalBoard: public Board {
     // the number of attackers the king has, runs generateAttackMap, and updates the
     // location of the king.
     void updateKingInfo();
+
+    vector<Pos> kingAttackerLocations();
 
     bool sameType(int rankIndex, int fileIndex, Type t);
 
@@ -88,6 +89,9 @@ class LegalBoard: public Board {
         // Determines if the position that the user set up is valid or not.
         // e.g. Is there one king per team?
         bool isValidPosition();
+
+        // Sets the game to InPlay if the position is valid.
+        void activateGame();
 
         const vector<Move>& getLegalMoves();
         ~LegalBoard() noexcept;

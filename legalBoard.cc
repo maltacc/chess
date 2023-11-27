@@ -136,10 +136,11 @@ void LegalBoard::updateKingInfo() {
             }
         }
     }
+}
 
-    // Updating King Attackers
+vector<Pos> LegalBoard::kingAttackerLocations(){
+    vector<Pos> kingAttackerList;
     Pos kingPos = (turn == Side::W ? whiteKing : blackKing);
-    kingAttackerList.clear();
     for (auto inc: DIAGDIR){
         for (int i = kingPos.getRank() + inc[0], j = kingPos.getFile() + inc[1];
              inBounds(i, j); i += inc[0], j += inc[1]){
@@ -173,6 +174,7 @@ void LegalBoard::updateKingInfo() {
     c = kingPos.getFile() - 1;
     if (sameType(r, c, Type::P) && !sameSide(r, c, turn))
         kingAttackerList.push_back(Pos{r, c});
+    return kingAttackerList;
 }
 
 bool LegalBoard::underCheck(){
