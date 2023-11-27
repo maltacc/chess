@@ -3,7 +3,7 @@ using namespace std;
 
 const int PERPDIR[4][2] = {{1, 0}, {-1, 0}, {0, -1}, {0, 1}};
 const int DIAGDIR[4][2] = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
-const int KNIGHT_INCR[DIM][2] = {
+const int NMOVES[DIM][2] = {
     {-1, 2}, {1, 2}, {-1, -2}, {1, -2}, 
     {2, 1}, {2, -1}, {-2, 1}, {-2, -1}
 };
@@ -75,10 +75,6 @@ void LegalBoard::generateAttackMap() {
             Type p = getPiece(i, j)->getType();  
 
             if (p == Type::N) { // Knight
-                const int NMOVES[DIM][2] = {
-                    {1, 2}, {-1, 2}, {-1, -2}, {1, -2},
-                    {2, 1}, {-2, 1}, {2, -1}, {-2, -1}
-                }; 
                 for (int k = 0; k < DIM; k++) {
                     int r = NMOVES[k][0] + i, c = NMOVES[k][1] + j; 
                     if (inBounds(r, c)) b[r][c].addAttacked(); 
@@ -161,7 +157,7 @@ vector<Pos> LegalBoard::kingAttackerLocations(){
             }
         }
     }
-    for (auto inc: KNIGHT_INCR){
+    for (auto inc: NMOVES){
         int r = kingPos.getRank() + inc[0], c = kingPos.getFile() + inc[1];
         if (sameType(r, c, Type::N) && !sameSide(r, c, turn))
             kingAttackerList.push_back(Pos{r, c});
@@ -177,9 +173,7 @@ vector<Pos> LegalBoard::kingAttackerLocations(){
     return kingAttackerList;
 }
 
-bool LegalBoard::underCheck(){
-    return kingAttackers;
-}
+bool LegalBoard::underCheck(){ return kingAttackers; }
 
 void LegalBoard::updateKingMoves(Pos p) {
     int r = p.getRank(), c = p.getFile(); 
@@ -236,7 +230,7 @@ void LegalBoard::addKnightLeaps(int ri, int ci, int rf, int cf) {
 void LegalBoard::updateKnightMoves(Pos p, bool isPinned) {
     if (isPinned) return; // There are no possible moves for the knight if its pinned
     int r = p.getRank(), c = p.getFile();
-    for (int i = 0; i < DIM; i++) addKnightLeaps(r, c, KNIGHT_INCR[i][0], KNIGHT_INCR[i][1]); 
+    for (int i = 0; i < DIM; i++) addKnightLeaps(r, c, NMOVES[i][0], NMOVES[i][1]); 
 }
 
 void LegalBoard::updatePawnMoves(Pos p, bool isPinned) {

@@ -15,7 +15,6 @@ class Piece {
         Type getType() const; // return char of piece
         Side getSide() const; // get colour of piece
         int getValue() const;
-        ~Piece(); 
 }; 
 
 #endif 
