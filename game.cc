@@ -7,17 +7,17 @@ void Game::setPlayer(string player, Player *p) {
     if (player == "human") p = new Human; 
     else {
         int lvl = player.back(); 
-        if (lvl == 1) p = new L1{&b};
-        else if (lvl == 2) p = new L2{&b}; 
-        else if (lvl == 3) p = new L3{&b}; 
-        else p = new L4{&b}; 
+        if (lvl == 1) p = new L1{b};
+        else if (lvl == 2) p = new L2{b}; 
+        else if (lvl == 3) p = new L3{b}; 
+        else p = new L4{b}; 
     }
 }
 
-void Game::printScore(ostream &out) {
+ostream& operator<<(ostream &out, const Game &g) {
     out << "Final Score: " << endl;
-    out << "White: " << whiteScore << endl; 
-    out << "Black: " << blackScore << endl; 
+    out << "White: " << g.whiteScore << endl; 
+    out << "Black: " << g.blackScore << endl; 
 }
 
 void Game::setupDefault() {

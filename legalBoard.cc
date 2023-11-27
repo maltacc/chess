@@ -9,6 +9,8 @@ const int NMOVES[DIM][2] = {
     {2, 1}, {2, -1}, {-2, 1}, {-2, -1}
 };
 
+LegalBoard::LegalBoard() {} 
+
 LegalBoard::LegalBoard(const Board& other): Board{other} {}
 
 bool LegalBoard::sameType(int rankIndex, int fileIndex, Type t) {

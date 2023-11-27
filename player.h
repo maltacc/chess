@@ -7,6 +7,7 @@ class Player {
         LegalBoard *b; 
 
     public: 
+        Player(); 
         Player(LegalBoard *b);
         virtual Move getMove() = 0;
         virtual ~Player(); 

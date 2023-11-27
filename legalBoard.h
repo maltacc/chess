@@ -17,6 +17,7 @@ class LegalBoard: public Board {
     vector<Move> legalMoves; // stores legal moves for 1 turn at a time
     canCastle castle{};
 
+    LegalBoard(); 
     LegalBoard(const Board& other); // ctor 
 
     // Updates the legal moves for pieces matching Side turn.
