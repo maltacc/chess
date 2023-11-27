@@ -1,4 +1,5 @@
 #include "legalBoard.h"
+#include <cstdlib>
 using namespace std;
 
 const int PERPDIR[4][2] = {{1, 0}, {-1, 0}, {0, -1}, {0, 1}};
@@ -297,26 +298,22 @@ const vector<Move>& LegalBoard::getLegalMoves() { return legalMoves; }
 
 bool LegalBoard::isPinned(int rankIndex, int fileIndex){
     Pos kingPos = (turn == Side::W ? whiteKing : blackKing);
-    int rankDiff = kingPos.getRank() - rankIndex;
-    int fileDiff = kingPos.getFile() - rankIndex;
+    int rankDiff = kingPos.getRank() - rankIndex, fileDiff = kingPos.getFile() - rankIndex;
     if (rankDiff == 0 && fileDiff == 0) return 0;
-    int rankDir = 0;
-    int fileDir = 0;
-    if (rankDiff != 0) rankDir = rankDiff / (rankDiff < 0 ? -rankDiff : rankDiff);
-    if (fileDiff != 0) fileDir = fileDiff / (fileDiff < 0 ? -fileDiff : fileDiff);
+    int rankDir = 0, fileDir = 0;
+    if (rankDiff != 0) rankDir = rankDiff / abs(rankDiff); 
+    if (fileDiff != 0) fileDir = fileDiff / abs(fileDiff); 
     if (rankDiff == fileDiff || rankDiff == -fileDiff || rankDiff == 0 || fileDiff == 0){
         for (int i = rankIndex + rankDir, j = fileIndex + fileDir; 
              i != rankIndex + rankDiff, j != fileIndex + fileDiff;
-             i += rankDir, j += fileDir){
+             i += rankDir, j += fileDir)
             if (!b[i][j].isEmpty()) return 0;
-        }
         for (int i = rankIndex - rankDir, j = fileIndex - fileDir; inBounds(i, j); i -= rankDir, j -= fileDir){
             if (!b[i][j].isEmpty()){
-                if (rankDir == 0 || fileDir == 0){
+                if (rankDir == 0 || fileDir == 0) {
                     if ((sameType(i, j, Type::R) || sameType(i, j, Type::Q)) && !sameSide(i, j, turn)) return 1;
-                } else {
+                } else
                     if ((sameType(i, j, Type::B) || sameType(i, j, Type::Q)) && !sameSide(i, j, turn)) return 1;
-                }
                 return 0;
             }
         }

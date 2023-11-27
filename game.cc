@@ -20,30 +20,6 @@ void Game::printScore(ostream &out) {
     out << "Black: " << blackScore << endl; 
 }
 
-void Game::setupCustom(istream &in) {
-    string cmd; // string instead of char so we can check for keyword "done"
-    while (in >> cmd && cmd != "done") { // while in setup mode
-        if (cmd == "+") {
-            char piece; 
-            string pos; 
-            in >> piece >> pos;
-            if (b->getTurn() == Side::W) b->place(Piece{piece, Side::W}, Pos{pos});
-            else b->place(Piece{piece, Side::B}, Pos{pos});
-        }
-        else if (cmd == "-") {
-            string pos; 
-            cin >> pos; 
-            b->remove(Pos{pos}); // remove piece from pos
-        }
-        else if (cmd == "=") {
-            string side; 
-            in >> side; 
-            if (side == "white") b->setTurn(Side::W); 
-            else b->setTurn(Side::B); 
-        }
-    }
-}
-
 void Game::setupDefault() {
     b->place(Piece{Type::K, Side::W}, Pos{"e1"});// set up Kings 
     b->place(Piece{Type::K, Side::B}, Pos{"e8"}); 
@@ -76,7 +52,7 @@ void Game::run(string wplayer, string bplayer) {
     setPlayer(wplayer, wp);
     setPlayer(bplayer, bp);
 
-    if (b->getState() < 4) setupDefault(); // board hasn't been set up already 
+    if (b->getState() != State::None) setupDefault(); // board hasn't been set up already 
 
     /* TO-DO Alan: Set game state to active */
     while (b->getState() == State::InPlay) {
@@ -90,8 +66,8 @@ void Game::run(string wplayer, string bplayer) {
         whiteScore += 0.5;
         blackScore += 0.5; 
     }
-    else if (b->getTurn() == Side::W) blackScore += 1;
-    else whiteScore += 1;
+    else if (b->getTurn() == Side::W) blackScore++;
+    else whiteScore++;
 }
 
 Game::~Game() {
