@@ -28,6 +28,6 @@ int Piece::getValue() const {
     }
 }
 
-bool Piece::operator==(const Piece &other) const{
+bool Piece::operator==(const Piece &other) const {
     return type == other.type && side == other.side;
 }

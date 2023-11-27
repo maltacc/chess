@@ -11,9 +11,9 @@ class Pos {
         Pos(); 
         Pos(string p); // takes in position as a string 
         Pos(int x, int y); // overloaded constructor with param coordinates 0-7
-        int getRank(); 
-        int getFile();
-        bool operator!=(const Pos &other);
+        int getRank() const; 
+        int getFile() const;
+        bool operator!=(const Pos &other) const;
         ~Pos(); 
 }; 
 

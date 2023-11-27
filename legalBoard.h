@@ -14,6 +14,7 @@ class LegalBoard: public Board {
 
     Pos whiteKing = Pos{4, 7}, blackKing = Pos{4, 0};
     int kingAttackers = 0;
+    vector<Pos> kingAttackerList;
     vector<Move> legalMoves; // stores legal moves for 1 turn at a time
     canCastle castle{};
 
@@ -36,15 +37,13 @@ class LegalBoard: public Board {
     void updateKnightMoves(Pos p, bool isPinned);
     void updatePawnMoves(Pos p, bool isPinned);
 
-    bool inBounds(int x, int y); 
+    bool inBounds(int x, int y);
 
-    void generateAttackMap();
+    // Checks if a square is under attack.
+    bool underCheck(Pos p, Side s);
 
     // Calculates if there is a draw by insufficient material.
     bool insufficientMaterial();
-
-    // Calculates if there have been three moves in a row made by the same player. 
-    bool threefoldRepetition();
 
     // Updates if the game is in checkmate, stalemate, draw, still active, or none.
     void updateState();

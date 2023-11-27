@@ -2,6 +2,7 @@
 #define __BOARD_H__
 #include "square.h"
 #include "observer.h"
+#include <vector>
 #include <iostream>
 using namespace std;
 

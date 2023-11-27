@@ -10,11 +10,11 @@ Pos::Pos(string p) {
 
 Pos::Pos(int x, int y): rank{x}, file{y} {}
 
-int Pos::getRank() { return rank; }
+int Pos::getRank() const { return rank; }
 
-int Pos::getFile() { return file; }
+int Pos::getFile() const { return file; }
 
-bool Pos::operator!=(const Pos &other) {
+bool Pos::operator!=(const Pos &other) const {
     return !(*this <=> other); 
 }
 
