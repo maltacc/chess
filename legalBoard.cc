@@ -217,13 +217,6 @@ void LegalBoard::updateKingMoves(Pos p) {
     }
 }
 
-bool canReachDiag(Pos start, Pos end){
-
-}
-bool canReachPerp(Pos start, Pos end){
-
-}
-
 void LegalBoard::updateQueenMoves(Pos p) {
     if (kingAttackers > 1) return;
     int r = p.getRank(), c = p.getFile(); 
@@ -267,7 +260,13 @@ void LegalBoard::updatePawnMoves(Pos p) {
         if (inBounds(r + 1, c) && b[r + 1][c].isEmpty()) legalMoves.push_back(Move{p, Pos{r - 1, c}}); 
         if (inBounds(r + 2, c) && b[r + 2][c].isEmpty() && (r == 1)) legalMoves.push_back(Move{p, Pos{r - 2, c}}); 
     }
-    // Q: do we consider en passant here? 
+    
+    if (!inBounds(epMove.getRank(), epMove.getFile())) return; // no en passant moves available
+
+    if (turn == Side::B)
+        legalMoves.push_back(Move{p, Pos{epMove.getRank() + 1, epMove.getFile()}}); 
+    else 
+        legalMoves.push_back(Move{p, Pos{epMove.getRank() - 1, epMove.getFile()}}); 
 }
 
 bool LegalBoard::insufficientMaterial() {
@@ -400,7 +399,7 @@ void LegalBoard::updateLegalMoves() {
             }
         }
     }
-
+    // TO-DO: remove moves that put own king in check using isKingInCheck()
     
 }
 

@@ -16,8 +16,7 @@ class LegalBoard: public Board {
     int kingAttackers = 0;
     vector<Move> legalMoves; // stores legal moves for 1 turn at a time
     canCastle castle{};
-
-    LegalBoard(); 
+ 
     LegalBoard(const Board& other); // ctor 
 
     // Updates the legal moves for pieces matching Side turn.
@@ -74,8 +73,13 @@ class LegalBoard: public Board {
     bool isKingInCheck();
 
     bool sameType(int rankIndex, int fileIndex, Type t);
-
     bool sameSide(int rankIndex, int fileIndex, Side s);
+
+    // TO-DO: store position of piece we can take by en passant 
+    // if there's no piece we can take by en passant, 
+    // set variable to a square that's impossible for a pawn to be in
+    // update legalMoves to include en passant
+    Pos epMove; 
 
     // Determines if the square at rankIndex, fileIndex is pinned to the current
     // turn's king.
@@ -83,6 +87,7 @@ class LegalBoard: public Board {
     // bool isPinned(int rankIndex, int fileIndex);
     
     public:
+        LegalBoard();
         Side getTurn();
         bool move(Move m) override;
 

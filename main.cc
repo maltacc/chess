@@ -1,10 +1,14 @@
 #include <iostream> 
 #include "game.h"
+#include "textdisplay.h"
+#include "graphicsdisplay.h"
 using namespace std; 
 
 int main() {
     string cmd; 
     LegalBoard b; 
+    TextDisplay *td; 
+    GraphicsDisplay *gd; 
     Game g{&b}; 
 
     while (cin >> cmd) {
@@ -45,7 +49,7 @@ int main() {
         }
         else cout << "Invalid command" << endl; 
     }
-    
+
     cout << g << endl;  // print score at the end of the program 
 }
 

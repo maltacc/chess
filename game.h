@@ -11,6 +11,7 @@
 #include "l2.h"
 #include "l3.h"
 #include "l4.h"
+
 class Game {
   Player *wp, *bp; // white player, black player
   LegalBoard *b; 

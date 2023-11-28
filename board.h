@@ -36,6 +36,8 @@ class Board {
         void attach(Observer* o); // observer pattern
         void notifyObservers(vector<Pos> v); // v contains new positions
         virtual ~Board() noexcept;
+        friend ostream& operator<<(ostream &out, const Board &b); 
+
 }; 
 
 #endif

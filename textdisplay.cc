@@ -33,7 +33,8 @@ char TextDisplay::convertToChar(Piece p) {
 void TextDisplay::notify(vector<Pos> v, Board &b) {
     for (Pos p: v) {
         int r = p.getRank(), c = p.getFile(); 
-        td[r][c] = convertToChar(*b.getPiece(r, c)); 
+        const Piece* piece = b.getPiece(r, c); 
+        td[r][c] = piece ? convertToChar(*piece) : '_'; 
     }
 }
 
