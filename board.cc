@@ -45,26 +45,28 @@ void Board::clear() {
 
 void Board::place(Piece piece, Pos pos) {
     b[pos.getRank()][pos.getFile()].addPiece(piece);
-    notifyObservers(); 
+    notifyObservers({pos}); 
 } 
 
 void Board::remove(Pos p) {
-    if (!b[p.getRank()][p.getFile()].isEmpty()) { // remove if piece is present
-        b[p.getRank()][p.getFile()].setEmpty(); 
-        notifyObservers(); 
+    int r = p.getRank(), c = p.getFile(); 
+    if (!b[r][c].isEmpty()) { // remove if piece is present
+        b[r][c].setEmpty(); 
+        notifyObservers({p}); 
     }
 }
 
 bool Board::move(Move m) {
-    b[m.getStart().getRank()][m.getStart().getFile()].move(b[m.getEnd().getRank()][m.getEnd().getFile()]);
-    notifyObservers(); 
+    Pos start = m.getStart(), end = m.getEnd(); 
+    b[start.getRank()][start.getFile()].move(b[end.getRank()][end.getFile()]);
+    notifyObservers({start, end}); 
     return 1;
 }
 
 void Board::attach(Observer* o) { observers.emplace_back(o); }
 
-void Board::notifyObservers() {
-    for (auto o: observers) o->notify(*this); 
+void Board::notifyObservers(vector<Pos> v) {
+    for (auto o: observers) o->notify(v, *this); 
 }
 
 const Piece* Board::getPiece(int i, int j) {

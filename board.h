@@ -34,7 +34,7 @@ class Board {
         void setTurn(Side s);
         virtual bool move(Move m);
         void attach(Observer* o); // observer pattern
-        void notifyObservers(); 
+        void notifyObservers(vector<Pos> v); // v contains new positions
         virtual ~Board() noexcept;
 }; 
 
