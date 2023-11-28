@@ -24,14 +24,14 @@ class LegalBoard: public Board {
     // Uses the following 6 fns to update the legal moves for all the pieces.
     void updateLegalMoves();
 
-    // Calculates legal moves for specific piece types at specific positions.
-    // Adds legal moves to legalMoves as well as to squares at Pos p.
+    // Calculates pseudolegal moves for specific piece types at specific positions.
+    // Adds the moves to legalMoves, and then moves that have their own king in check are deleted.
     void updateKingMoves(Pos p);
-    void updateQueenMoves(Pos p, bool isPinned);
-    void updateRookMoves(Pos p, bool isPinned);
-    void updateBishopMoves(Pos p, bool isPinned);
-    void updateKnightMoves(Pos p, bool isPinned);
-    void updatePawnMoves(Pos p, bool isPinned);
+    void updateQueenMoves(Pos p);
+    void updateRookMoves(Pos p);
+    void updateBishopMoves(Pos p);
+    void updateKnightMoves(Pos p);
+    void updatePawnMoves(Pos p);
 
     bool inBounds(int x, int y);
 
@@ -69,7 +69,9 @@ class LegalBoard: public Board {
     // location of the king.
     void updateKingInfo();
 
-    vector<Pos> kingAttackerLocations();
+    // Checks if the king is in check in the current position without creating an attack
+    // map or using kingAttackers.
+    bool isKingInCheck();
 
     bool sameType(int rankIndex, int fileIndex, Type t);
 
@@ -78,7 +80,7 @@ class LegalBoard: public Board {
     // Determines if the square at rankIndex, fileIndex is pinned to the current
     // turn's king.
     // condition: must be run after the location of the king has been determined.
-    bool isPinned(int rankIndex, int fileIndex);
+    // bool isPinned(int rankIndex, int fileIndex);
     
     public:
         Side getTurn();

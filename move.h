@@ -7,13 +7,15 @@ class Move {
     protected:
         Pos start, end; 
         Type promote = Type::P; // The promotion is pawn by default; illegal to promote to pawn.
+                                // Pawn promotion signifies 
 
     public: 
-        Move(Pos start, Pos end);
+        Move(Pos start, Pos end, bool enPassant = 0);
         Move(Pos start, Pos end, Type promote);
-        Pos getStart(); 
-        Pos getEnd();
-        Type getPromo();
+        Pos getStart() const;
+        Pos getEnd() const;
+        Type getPromo() const;
+        bool isEnPassant() const;
         bool operator==(const Move &other) const;
 }; 
 
