@@ -15,7 +15,7 @@ class LegalBoard: public Board {
     Pos whiteKing = Pos{4, 7}, blackKing = Pos{4, 0};
     int kingAttackers = 0;
     vector<Move> legalMoves; // stores legal moves for 1 turn at a time
-    canCastle castle{};
+    canCastle castle;
  
     LegalBoard(const Board& other); // ctor 
 

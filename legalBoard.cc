@@ -142,27 +142,28 @@ bool LegalBoard::isKingInCheck() {
     int r = kingPos.getRank(), c = kingPos.getFile();
     for (auto incr : PERPDIR){
         for (int i = incr[0] + r, j = incr[1] + c; inBounds(i, j); i += incr[0], j += incr[1]){
-            if (!b[i][j].isEmpty()){
+            if (!b[i][j].isEmpty()) {
                 if (!sameSide(i, j, turn) && (sameType(i, j, Type::Q) || sameType(i, j, Type::R))) return 1;
                 break;
             }
         }
     }
-    for (auto incr : DIAGDIR){
+    for (auto incr : DIAGDIR) {
         for (int i = incr[0] + r, j = incr[1] + c; inBounds(i, j); i += incr[0], j += incr[1]){
-            if (!b[i][j].isEmpty()){
+            if (!b[i][j].isEmpty()) {
                 if (!sameSide(i, j, turn) && (sameType(i, j, Type::Q) || sameType(i, j, Type::B))) return 1;
                 break;
             }
         }
     }
-    for (auto incr : NMOVES){
+    for (auto incr : NMOVES) {
         int i = incr[0] + r, j = incr[1] + c;
-        if (!b[i][j].isEmpty()){
+        if (!b[i][j].isEmpty()) {
             if (!sameSide(i, j, turn) && sameType(i, j, Type::N)) return 1;
             break;
         }
     }
+
     if (turn == Side::W) {
         if (sameType(r + 1, c - 1, Type::P) && !sameSide(r + 1, c - 1, turn)) return 1;
         if (sameType(r + 1, c + 1, Type::P) && !sameSide(r + 1, c + 1, turn)) return 1;
@@ -399,19 +400,24 @@ void LegalBoard::updateLegalMoves() {
             }
         }
     }
-    // TO-DO: remove moves that put own king in check using isKingInCheck()
-    
+    // Remove moves that put our own king in check
+    for (auto it = legalMoves.begin(); it != legalMoves.end(); ++it) {
+        move(*it); // simulate move 
+        if (isKingInCheck()) legalMoves.erase(it); 
+        else ++it; 
+        // TO-DO: undo the move
+    }
 }
 
 bool LegalBoard::move(Move m) {
     if (state != State::InPlay) return 0;
-    bool success = 0;
     
     if (m == RESIGN) {
         state = State::Resign;
         return 0;
     }
 
+    bool success = 0;
     for (auto move: legalMoves) {
         if (!(move.getStart() != m.getStart()) && !(move.getEnd() != m.getEnd())) {
             success = 1;
@@ -420,11 +426,12 @@ bool LegalBoard::move(Move m) {
     }
     if (!success) return 0;
 
-    int initRow = m.getStart().getRank(), initCol = m.getStart().getFile(), 
-        finRow = m.getEnd().getRank(), finCol = m.getEnd().getFile(); 
-
+    int ri = m.getStart().getRank(), ci = m.getStart().getFile(), 
+        rf = m.getEnd().getRank(), cf = m.getEnd().getFile(); 
+    
     // handling castling
-    if (sameType(initRow, initCol, Type::K)) {
+    const Pos BQ = Pos{0, 0}, BK = Pos{0, 7}, WQ = Pos{7, 0}, WK = Pos{7, 7}; 
+    if (sameType(ri, ci, Type::K)) {
         if (turn == Side::W) {
             castle.whiteKing = 0;
             castle.whiteQueen = 0;
@@ -432,53 +439,37 @@ bool LegalBoard::move(Move m) {
             castle.blackKing = 0;
             castle.whiteKing = 0;
         }
-    } else if (sameType(initRow, initCol, Type::R)) {
-        if (!(m.getStart() != Pos{0, 0})){
-            castle.blackQueen = 0;
-        } else if (!(m.getStart() != Pos{0, 7})){
-            castle.blackKing = 0;
-        } else if (!(m.getStart() != Pos{7, 0})){
-            castle.whiteQueen = 0;
-        } else if (!(m.getStart() != Pos{7, 7})){
-            castle.whiteKing = 0;
-        }
-    }
-    if (!(m.getEnd() != Pos{0, 0})){
-        castle.blackQueen = 0;
-    } else if (!(m.getEnd() != Pos{0, 7})){
-        castle.blackKing = 0;
-    } else if (!(m.getEnd() != Pos{7, 0})){
-        castle.whiteQueen = 0;
-    } else if (!(m.getEnd() != Pos{7, 7})){
-        castle.whiteKing = 0;
-    }
-    // handling en passant:
-    if (sameType(initRow, initCol, Type::P)) {
-        if (initCol != finCol && b[finRow][finCol].isEmpty()) {
-            remove(Pos{initRow, finCol});
-        }
+    } else if (sameType(ri, ci, Type::R)) {
+        if (!(m.getStart() != BQ)) castle.blackQueen = 0;
+        else if (!(m.getStart() != BK))castle.blackKing = 0;
+        else if (!(m.getStart() != WQ)) castle.whiteQueen = 0;
+        else if (!(m.getStart() != WK)) castle.whiteKing = 0;
     }
 
-    // actually moving the piece
-    b[initRow][initCol].move(b[finRow][finCol]);
+    // TO-DO: The below code block is the same as the above. Can we remove it?
+    if (!(m.getEnd() != BQ)) castle.blackQueen = 0;
+    else if (!(m.getEnd() != BK)) castle.blackKing = 0;
+    else if (!(m.getEnd() != WQ)) castle.whiteQueen = 0;
+    else if (!(m.getEnd() != WK)) castle.whiteKing = 0;
+
+    // Handling en passant:
+    if (sameType(ri, ci, Type::P)) {
+        if (ci != cf && b[rf][cf].isEmpty()) remove(Pos{ri, cf}); // remove piece captured
+    }
+    b[ri][ci].move(b[rf][cf]); // actually moving the piece
 
     // Handling promotion
-    if (sameType(finRow, finCol, Type::P) && 
-        (finRow == DIM - 1 && turn == Side::B || finRow == 0 && turn == Side::W)) {
+    if (sameType(rf, cf, Type::P) && 
+        (rf == DIM - 1 && turn == Side::B || rf == 0 && turn == Side::W)) {
         promote(m.getPromo());
     }
 
     // Handling the rook in castling
-    if (sameType(finRow, finCol, Type::K) && abs(initCol - finCol) == 2) {
-        if (!(m.getEnd() != Pos{0, 2})){
-            b[0][0].move(b[0][3]);
-        } else if (!(m.getEnd() != Pos{0, 6})){
-            b[0][7].move(b[0][5]);
-        } else if (!(m.getEnd() != Pos{7, 2})){
-            b[7][0].move(b[7][3]);
-        } else if (!(m.getEnd() != Pos{7, 6})){
-            b[7][7].move(b[7][5]);
-        }
+    if (sameType(rf, cf, Type::K) && abs(ci - cf) == 2) {
+        if (!(m.getEnd() != Pos{0, 2})) b[0][0].move(b[0][3]);
+        else if (!(m.getEnd() != Pos{0, 6})) b[0][7].move(b[0][5]);
+        else if (!(m.getEnd() != Pos{7, 2})) b[7][0].move(b[7][3]);
+        else if (!(m.getEnd() != Pos{7, 6})) b[7][7].move(b[7][5]);
     }
 
     turn = (turn == Side::W ? Side::B : Side::W);
