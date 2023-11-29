@@ -24,8 +24,8 @@ int main() {
                         char piece; 
                         string pos; 
                         cin >> piece >> pos;
-                        if (b.getTurn() == Side::W) b.place(Piece{piece, Side::W}, Pos{pos});
-                        else b.place(Piece{piece, Side::B}, Pos{pos});
+                        if (b.getTurn() == Side::W) b.place(Piece{piece}, Pos{pos});
+                        else b.place(Piece{piece}, Pos{pos});
                     }
                     else if (setCmd == "-") {
                         string pos; 

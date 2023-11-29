@@ -1,6 +1,6 @@
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
-#include "legalboard.h"
+#include "legalBoard.h"
 
 class Player {
     protected: 

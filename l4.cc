@@ -25,8 +25,8 @@ Move L4::getMove() {
         tmpBoard = LegalBoard{*b};
     }
 
-    int max = INT_MIN, maxIndex = -1;
-    for (int i = 0; i < capture.size(); i++) {
+    int max = 0, maxIndex = -1;
+    for (size_t i = 0; i < capture.size(); i++) {
         Pos p = capture[i].getEnd(); 
         int curVal = (*b->getPiece(p.getRank(), p.getFile())).getValue();
         if (curVal > max) {

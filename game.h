@@ -3,7 +3,7 @@
 
 #include <string> 
 #include <iostream> 
-#include "legalboard.h"
+#include "legalBoard.h"
 #include "player.h"
 #include "human.h"
 #include "computer.h"
@@ -13,8 +13,8 @@
 #include "l4.h"
 
 class Game {
+  LegalBoard *b;
   Player *wp, *bp; // white player, black player
-  LegalBoard *b; 
   float whiteScore, blackScore; 
   void setPlayer(string player, Player* p); // initialize player type and level 
 

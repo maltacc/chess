@@ -3,14 +3,15 @@ using namespace std;
 
 Piece::Piece(Type t, Side s): type{t}, side{s} {}
 
-Piece::Piece(char piece, Side s): side{s} {
+Piece::Piece(char piece) {
+    side = isupper(piece) ? Side::W : Side::B; 
     char p = toupper(piece); 
-    if (piece == 'K') type = Type::K; 
-    else if (piece == 'Q') type = Type::Q; 
-    else if (piece == 'N') type = Type::N; 
-    else if (piece == 'B') type = Type::B;
-    else if (piece == 'P') type = Type::P; 
-    else if (piece == 'R') type = Type::R; 
+    if (p == 'K') type = Type::K; 
+    else if (p == 'Q') type = Type::Q; 
+    else if (p == 'N') type = Type::N; 
+    else if (p == 'B') type = Type::B;
+    else if (p == 'P') type = Type::P; 
+    else if (p == 'R') type = Type::R; 
 }
 
 Type Piece::getType() const { return type; }

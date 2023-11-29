@@ -18,6 +18,7 @@ ostream& operator<<(ostream &out, const Game &g) {
     out << "Final Score: " << endl;
     out << "White: " << g.whiteScore << endl; 
     out << "Black: " << g.blackScore << endl; 
+    return out;
 }
 
 void Game::setupDefault() {

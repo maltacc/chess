@@ -12,7 +12,33 @@ const Pos NO_EN_PASSANT = Pos{-1, -1};
 
 LegalBoard::LegalBoard() {} 
 
-LegalBoard::LegalBoard(const Board& other): Board{other} {}
+LegalBoard::LegalBoard(const LegalBoard &other): Board{other} {
+    for (int r = 0; r < DIM; r++) // copy Square array 
+        for (int c = 0; c < DIM; c++) {
+            b[r][c] = Square{other.b[r][c]}; // copies the square and piece in it
+        }
+}
+
+LegalBoard::LegalBoard(LegalBoard &&other): Board{other} {
+    std::swap(b, other.b);
+}
+
+LegalBoard& LegalBoard::operator=(const LegalBoard &other) {
+    if (this == &other) return *this; 
+    LegalBoard tmp = other;
+    std::swap(b, tmp.b); 
+    std::swap(state, tmp.state); 
+    std::swap(turn, tmp.turn); 
+    return *this; 
+}
+
+LegalBoard& LegalBoard::operator=(LegalBoard &&other) {
+    if (this == &other) return *this; 
+    std::swap(state, other.state); 
+    std::swap(turn, other.turn); 
+    std::swap(b, other.b); 
+    return *this; 
+} 
 
 bool LegalBoard::sameType(int rankIndex, int fileIndex, Type t) {
     return !(b[rankIndex][fileIndex].isEmpty()) && b[rankIndex][fileIndex].getPiece()->getType() == t;
@@ -46,12 +72,10 @@ void LegalBoard::traverseDir(int r, int c, int rowDir, int colDir) {
 }
 
 void LegalBoard::addDiagonals(int r, int c) {
-    const int DIR[4][2] = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
     for (int i = 0; i < 4; i++) traverseDir(r, c, DIAGDIR[i][0], DIAGDIR[i][1]); 
 }
 
 void LegalBoard::addPerpendiculars(int r, int c) {
-    const int DIR[4][2] = {{1, 0}, {-1, 0}, {0, -1}, {0, 1}};
     for (int i = 0; i < 4; i++) traverseDir(r, c, PERPDIR[i][0], PERPDIR[i][1]); 
 }
 
@@ -65,8 +89,6 @@ void LegalBoard::attackDir(int r, int c, int rowDir, int colDir) {
 }
 
 void LegalBoard::generateAttackMap() {
-    Side attackingSide = (turn == Side::W ? Side::B : Side::W); 
-
     // reset attack map
     for (int i = 0; i < DIM; i++) {
         for (int j = 0; j < DIM; j++) b[i][j].setAttacked(0); 
@@ -504,7 +526,7 @@ bool LegalBoard::move(Move m) {
 
     // Handling promotion
     if (sameType(rf, cf, Type::P) && 
-        (rf == DIM - 1 && turn == Side::B || rf == 0 && turn == Side::W)) {
+        ((rf == DIM - 1 && turn == Side::B) || (rf == 0 && turn == Side::W))) {
         promote(m.getPromo());
     }
 

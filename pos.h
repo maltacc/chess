@@ -2,6 +2,7 @@
 #define __POS_H__
 #include <string>
 #include <compare>
+using namespace std;
 
 class Pos {
     int rank, file; 

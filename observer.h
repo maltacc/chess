@@ -1,6 +1,10 @@
 #ifndef __OBSERVER_H__
 #define __OBSERVER_H__
-#include "board.h"
+#include "pos.h"
+#include <vector>
+using namespace std;
+
+class Board; 
 
 class Observer {
     public: 

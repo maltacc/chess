@@ -5,10 +5,10 @@
 #include <stdlib.h>
 
 class Computer: public Player {
-    Board *board;
+    LegalBoard lb;
 
     public: 
-        Computer(Board *board);
+        Computer(LegalBoard *board);
         virtual ~Computer();
 }; 
 

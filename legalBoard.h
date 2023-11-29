@@ -98,6 +98,14 @@ class LegalBoard: public Board {
     
     public:
         LegalBoard();
+        // The following 4 of the Big 5 will be used exclusively for copying/assigning 
+        // temporary boards for the Players. Since we don't wan't to notify observers, 
+        // we don't copy this field over
+        LegalBoard(const LegalBoard &other); // copy ctor
+        LegalBoard(LegalBoard &&other); // move ctor
+        LegalBoard &operator=(const LegalBoard &other); // copy assignment operator
+        LegalBoard &operator=(LegalBoard &&other); // move assignment operator
+
         Side getTurn();
         bool move(Move m) override;
 

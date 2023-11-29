@@ -11,7 +11,7 @@ class Piece {
     public:
         bool operator==(const Piece &other) const;
         Piece(Type t, Side s); 
-        Piece(char piece, Side s); 
+        Piece(char piece); 
         Type getType() const; // return char of piece
         Side getSide() const; // get colour of piece
         int getValue() const;

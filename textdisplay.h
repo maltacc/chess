@@ -2,6 +2,8 @@
 #define __TEXTDISPLAY_H__
 #include "observer.h"
 #include <iostream> 
+#include "piece.h"
+using namespace std;
 
 class TextDisplay: public Observer {
     char td[8][8]; 
