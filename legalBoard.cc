@@ -301,11 +301,8 @@ bool LegalBoard::insufficientMaterial() {
 void LegalBoard::updateState() {
     // Checking stalemate / checkmate
     if (legalMoves.size() == 0) {
-        if (underCheck()) {
-            state = State::Checkmate;
-        } else {
-            state = State::Stalemate;
-        }
+        if (underCheck()) state = State::Checkmate;
+        else state = State::Stalemate;
         return;
     }
     if (insufficientMaterial()) state = State::Draw;
@@ -406,11 +403,50 @@ void LegalBoard::updateLegalMoves() {
         }
     }
     // Remove moves that put our own king in check
+    // use square move function to simulate moves 
+    // simulation exceptions: castling, en passant (more than 1 piece moves)
+    // don't consider edge cases for promotion (legality is same as any other move) 
     for (auto it = legalMoves.begin(); it != legalMoves.end(); ++it) {
-        move(*it); // simulate move 
-        if (isKingInCheck()) legalMoves.erase(it); 
-        else ++it; 
-        // TO-DO: undo the move
+        int ri = (*it).getStart().getRank(), ci = (*it).getStart().getFile(), 
+            rf = (*it).getEnd().getRank(), cf = (*it).getEnd().getFile(); 
+
+        b[ri][ci].move(b[rf][cf]); // simulate move 
+
+        // Move is en passant
+        if (inBounds(epMove.getRank(), epMove.getFile())) {
+            int r = epMove.getRank(), c = epMove.getFile(); 
+            const Piece captured = *getPiece(r, c); 
+            b[r][c].setEmpty(); // capture opponent's pawn
+            if (isKingInCheck()) legalMoves.erase(it); 
+            else ++it; 
+            b[r][c].addPiece(captured); // restore captured pawn
+            b[ri][ci].addPiece(*getPiece(rf, cf)); 
+            b[rf][cf].setEmpty();
+        }
+        else if ((abs(cf - ci) == 2) && sameType(rf, cf, Type::K)) { // castle
+            if (isKingInCheck()) legalMoves.erase(it); 
+            else ++it; 
+            if (turn == Side::W) {
+                b[rf][cf].move(b[7][4]); 
+                if (cf == 2) b[7][3].move(b[7][0]); 
+                else b[7][6].move(b[7][7]); 
+            }
+            else {
+                b[rf][cf].move(b[0][4]);
+                if (cf == 2) b[0][3].move(b[0][0]); 
+                else b[0][6].move(b[0][7]);   
+            }
+        }
+        // Regular move
+        else {
+            const Piece* captured = getPiece(rf, cf);  
+            if (isKingInCheck()) legalMoves.erase(it); 
+            else ++it; 
+            // TO-DO: undo the move
+            b[ri][ci].addPiece(*getPiece(rf, cf)); 
+            if (captured) b[rf][cf].addPiece(*captured); // restore captured piece
+            else b[rf][cf].setEmpty(); 
+        }
     }
 }
 

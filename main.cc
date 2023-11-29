@@ -10,6 +10,8 @@ int main() {
     TextDisplay *td; 
     GraphicsDisplay *gd; 
     Game g{&b}; 
+    b.attach(td);
+    b.attach(gd); 
 
     while (cin >> cmd) {
         if (cmd == "setup") {

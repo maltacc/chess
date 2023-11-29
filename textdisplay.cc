@@ -46,7 +46,6 @@ ostream &operator<<(ostream &out, const TextDisplay &td) {
         }
         out << endl;
     }
-
     out << "  " << " abcdefgh" << endl; // print files
     return out; 
 }
