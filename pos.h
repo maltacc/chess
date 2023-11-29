@@ -14,6 +14,7 @@ class Pos {
         int getRank() const; 
         int getFile() const;
         bool operator!=(const Pos &other) const;
+        bool operator==(const Pos &other) const;
         ~Pos(); 
 }; 
 

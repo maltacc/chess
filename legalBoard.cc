@@ -8,6 +8,7 @@ const int NMOVES[DIM][2] = {
     {-1, 2}, {1, 2}, {-1, -2}, {1, -2}, 
     {2, 1}, {2, -1}, {-2, 1}, {-2, -1}
 };
+const Pos NO_EN_PASSANT = Pos{-1, -1};
 
 LegalBoard::LegalBoard() {} 
 
@@ -262,12 +263,16 @@ void LegalBoard::updatePawnMoves(Pos p) {
         if (inBounds(r + 2, c) && b[r + 2][c].isEmpty() && (r == 1)) legalMoves.push_back(Move{p, Pos{r - 2, c}}); 
     }
     
-    if (!inBounds(epMove.getRank(), epMove.getFile())) return; // no en passant moves available
-
-    if (turn == Side::B)
-        legalMoves.push_back(Move{p, Pos{epMove.getRank() + 1, epMove.getFile()}}); 
-    else 
-        legalMoves.push_back(Move{p, Pos{epMove.getRank() - 1, epMove.getFile()}}); 
+    if (epMove == NO_EN_PASSANT) return; // no en passant moves available
+    
+    // Adding possible en-passant moves.
+    int epRank = epMove.getRank(), epFile = epMove.getFile();
+    if (r == epRank && abs(epFile - c) == 1){
+        if (turn == Side::B)
+            legalMoves.push_back(Move{p, Pos{epRank + 1, epFile}}); 
+        else 
+            legalMoves.push_back(Move{p, Pos{epRank - 1, epFile}}); 
+    }
 }
 
 bool LegalBoard::insufficientMaterial() {
@@ -429,7 +434,7 @@ bool LegalBoard::move(Move m) {
     int ri = m.getStart().getRank(), ci = m.getStart().getFile(), 
         rf = m.getEnd().getRank(), cf = m.getEnd().getFile(); 
     
-    // handling castling
+    // handling castling permissions
     const Pos BQ = Pos{0, 0}, BK = Pos{0, 7}, WQ = Pos{7, 0}, WK = Pos{7, 7}; 
     if (sameType(ri, ci, Type::K)) {
         if (turn == Side::W) {
@@ -446,7 +451,6 @@ bool LegalBoard::move(Move m) {
         else if (!(m.getStart() != WK)) castle.whiteKing = 0;
     }
 
-    // TO-DO: The below code block is the same as the above. Can we remove it?
     if (!(m.getEnd() != BQ)) castle.blackQueen = 0;
     else if (!(m.getEnd() != BK)) castle.blackKing = 0;
     else if (!(m.getEnd() != WQ)) castle.whiteQueen = 0;
@@ -455,7 +459,11 @@ bool LegalBoard::move(Move m) {
     // Handling en passant:
     if (sameType(ri, ci, Type::P)) {
         if (ci != cf && b[rf][cf].isEmpty()) remove(Pos{ri, cf}); // remove piece captured
+    // Handling updating the pawn that can potentially be captured en-passant for next turn:
+        else if (ri - rf == 2 || rf - ri == 2) epMove = Pos{rf, cf};
+        else epMove = NO_EN_PASSANT;
     }
+    
     b[ri][ci].move(b[rf][cf]); // actually moving the piece
 
     // Handling promotion

@@ -18,4 +18,8 @@ bool Pos::operator!=(const Pos &other) const {
     return !(*this <=> other); 
 }
 
+bool Pos::operator==(const Pos &other) const {
+    return *this <=> other;
+}
+
 Pos::~Pos() {}

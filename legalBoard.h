@@ -5,6 +5,54 @@
 using namespace std;
 
 class LegalBoard: public Board {
+ 
+    LegalBoard(const Board& other); // ctor 
+
+// Move Legality
+//----------
+    // stores legal moves for 1 turn at a time
+    vector<Move> legalMoves;
+    // Stores position of piece we can take by en passant 
+    // if there's no piece we can take by en passant, 
+    // set variable to a square that's impossible for a pawn to be in
+    // update legalMoves to include en passant
+    Pos epMove;
+
+    // Updates the legal moves for pieces matching Side turn.
+    // Generates a vector of all pseudolegal moves using the following 6 fns,
+    // then removes moves that are not strictly legal.
+    void updateLegalMoves();
+
+    // Calculates pseudolegal moves for specific piece types at specific positions.
+    // Adds the moves to legalMoves, and then moves that have their own king in check
+    // are deleted in updateLegalMoves.
+    void updateKingMoves(Pos p);
+    void updateQueenMoves(Pos p);
+    void updateRookMoves(Pos p);
+    void updateBishopMoves(Pos p);
+    void updateKnightMoves(Pos p);
+    void updatePawnMoves(Pos p);
+//----------
+
+// Helper methods for repeat code:
+//----------
+    // Checks if x and y are within the appropriate index boundaries of our chess board.
+    bool inBounds(int x, int y);
+    bool sameType(int rankIndex, int fileIndex, Type t);
+    bool sameSide(int rankIndex, int fileIndex, Side s);
+
+    bool addValidMoves(int r, int c, int i, int j); // return 1 if move added, otherwise 0
+    void traverseDir(int r, int c, int rowDir, int colDir);
+
+    void addDiagonals(int r, int c); 
+    void addPerpendiculars(int r, int c); 
+    void addKnightLeaps(int ri, int ci, int rf, int cf); 
+
+    void attackDir(int r, int c, int rowDir, int colDir); 
+//----------
+
+// King Information + Gamestate Functions:
+//----------
     struct canCastle { // struct to keep track of castling rights
         bool blackKing = true; // Black king-side castle
         bool blackQueen = true; // Black queen-side castle
@@ -12,27 +60,9 @@ class LegalBoard: public Board {
         bool whiteQueen = true; // White queen-side castle
     };
 
-    Pos whiteKing = Pos{4, 7}, blackKing = Pos{4, 0};
-    int kingAttackers = 0;
-    vector<Move> legalMoves; // stores legal moves for 1 turn at a time
     canCastle castle;
- 
-    LegalBoard(const Board& other); // ctor 
-
-    // Updates the legal moves for pieces matching Side turn.
-    // Uses the following 6 fns to update the legal moves for all the pieces.
-    void updateLegalMoves();
-
-    // Calculates pseudolegal moves for specific piece types at specific positions.
-    // Adds the moves to legalMoves, and then moves that have their own king in check are deleted.
-    void updateKingMoves(Pos p);
-    void updateQueenMoves(Pos p);
-    void updateRookMoves(Pos p);
-    void updateBishopMoves(Pos p);
-    void updateKnightMoves(Pos p);
-    void updatePawnMoves(Pos p);
-
-    bool inBounds(int x, int y);
+    Pos whiteKing = Pos{4, 7}, blackKing = Pos{4, 0}; // Default values for default setup
+    int kingAttackers = 0;
 
     // Checks if a square is under attack.
     bool underCheck(Pos p, Side s);
@@ -42,18 +72,6 @@ class LegalBoard: public Board {
 
     // Updates if the game is in checkmate, stalemate, draw, still active, or none.
     void updateState();
-
-    
-
-    // Helper methods: 
-    bool addValidMoves(int r, int c, int i, int j); // return 1 if move added, otherwise 0
-    void traverseDir(int r, int c, int rowDir, int colDir);
-
-    void addDiagonals(int r, int c); 
-    void addPerpendiculars(int r, int c); 
-    void addKnightLeaps(int ri, int ci, int rf, int cf); 
-
-    void attackDir(int r, int c, int rowDir, int colDir); 
 
     // Generates the attack map of the current opponent's pieces for the purposes
     // of generating legal King moves.
@@ -71,15 +89,7 @@ class LegalBoard: public Board {
     // Checks if the king is in check in the current position without creating an attack
     // map or using kingAttackers.
     bool isKingInCheck();
-
-    bool sameType(int rankIndex, int fileIndex, Type t);
-    bool sameSide(int rankIndex, int fileIndex, Side s);
-
-    // TO-DO: store position of piece we can take by en passant 
-    // if there's no piece we can take by en passant, 
-    // set variable to a square that's impossible for a pawn to be in
-    // update legalMoves to include en passant
-    Pos epMove; 
+//----------
 
     // Determines if the square at rankIndex, fileIndex is pinned to the current
     // turn's king.
